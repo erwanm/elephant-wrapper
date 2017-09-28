@@ -4,4 +4,6 @@ src/wapiti/wapiti
 src/elman/elman
 bin/wapiti
 bin/elman
+bin/elephant
+bin/elephant-train
 *~
