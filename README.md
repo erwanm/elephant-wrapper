@@ -1,42 +1,19 @@
 
+
 This is a modified version of the Elephant tokenizer system:
-- [[original repository|https://github.com/ParallelMeaningBank/elephant]]
-- [[original website|http://gmb.let.rug.nl/elephant]]
-- [[Paper by the original authors|http://aclweb.org/anthology/D/D13/D13-1146.pdf]]
+- [original repository](https://github.com/ParallelMeaningBank/elephant)
+- [original website](http://gmb.let.rug.nl/elephant)
+- [Paper by the original authors](http://aclweb.org/anthology/D/D13/D13-1146.pdf)
 
 This version tries to improve usability of the system, in particular we try to make training a new model easier.
-We propose a few additional scripts
-To install elephant simply type
+There should be a few additional scripts and some minimal documentation soon enough :)
 
-$ make ; make install
 
-this will compile the external tools wapiti and elman and copy the
-executables files in /usr/local/bin . To change the destination directory
-the variable PREFIX in the Makefile has to be edited.
+# License
 
-After installation, elephant is invoked like in these examples:
+## Elephant, Wapiti
 
-(PTB-style output)
-$ echo 'Good morning Mr. President.' | elephant -m models/english
-
-(IOB output format)
-$ echo 'Good morning Mr. President.' | elephant -m models/english -f iob
-
-It is also possible to run elephant from the source directory without need
-to install it, by just typing
-
-$ make
-
-and invoking the executable from the current directory, e.g.
-
-$ echo 'Good morning Mr. President.' | ./elephant -m models/english/
-
-Included in the distribution there are the models for sentence and word boundary
-detection of English, Dutch and Italian.
-
-License
-
-[[Elephant|http://gmb.let.rug.nl/elephant]] is published under the [[BSD 2 Clauses license|https://opensource.org/licenses/BSD-2-Clause]]: 
+[Elephant](http://gmb.let.rug.nl/elephant) and [Wapiti](https://wapiti.limsi.fr/) are both published under the [BSD 2 Clauses license](https://opensource.org/licenses/BSD-2-Clause): 
 
 Copyright (c) 2009-2013  CNRS
 All rights reserved.
@@ -60,3 +37,7 @@ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
+
+## This version
+
+Not decided yet
