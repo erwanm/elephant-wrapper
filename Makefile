@@ -1,33 +1,27 @@
+PREFIX=.
+BIN=$(PREFIX)/bin/
 ELMANDIR=src/elman/
-ELMAN=ext/elman
 WAPITIDIR=src/wapiti/
-WAPITI=ext/wapiti
-PREFIX=/usr/local/
-BIN=$(PREFIX)bin/
 
-all : elephant elephant-train
+all : elephant elephant-train elman
 
-$(ELMAN) :
-	cd $(ELMANDIR) ; make
-	cp $(ELMANDIR)elman $@
-	
-$(WAPITI) : 
-	cd $(WAPITIDIR) ; make
-	cp $(WAPITIDIR)wapiti $@
+elman :
+	cd $(ELMANDIR)
+	make
 
-elephant : src/elephant $(ELMAN) $(WAPITI)
-	cp src/elephant .
+wapiti : 
+	cd $(WAPITIDIR)
+	make
+
+elephant : src/elephant elman wapiti
 
 elephant-train : src/elephant-train elephant
-	cp src/elephant-train .
-	
-install : elephant
-	cp elephant $(WAPITI) $(ELMAN) $(BIN)
-	
-clean :
-	rm -f elephant
-	rm -rf $(ELMANDIR)elephant $(WAPITIDIR)wapiti
-	rm -f ext/*
 
-uninstall :
-	rm -f $(BIN)elephant $(BIN)elman $(BIN)wapiti
+install : elephant elephant-train
+	cp elephant elephant-train $(WAPITIDIR)/wapiti $(ELMAN)/elman $(BIN)
+
+clean :
+	rm -f $(BIN)/elephant $(BIN)/elephant-train $(BIN)/wapiti $(BIN)/elman
+	cd $(WAPITIDIR) ; make clean
+	cd $(ELMANDIR) ; make clean
+
