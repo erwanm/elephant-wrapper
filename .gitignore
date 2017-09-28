@@ -1,3 +1,5 @@
 *.pyc
-/out
-/elephantc
+bin/
+*.o
+src/wapiti/wapiti
+src/elman/elman
