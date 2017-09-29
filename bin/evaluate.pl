@@ -77,5 +77,5 @@ for (my $i=0; $i<scalar(@$answersPred); $i++) {
     }
 }
 
-printf("%d\t%d\t%.6f\n", scalar(@$answersPred), $nbErr, $nbErr/scalar(@$answersPred));
+printf("%d\t%d\t%.8f\n", scalar(@$answersPred), $nbErr, $nbErr/scalar(@$answersPred));
 
