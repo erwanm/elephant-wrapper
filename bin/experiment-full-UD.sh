@@ -75,10 +75,9 @@ while read patternFile; do
 		    untokenize.pl -f UD -C 1 "$testFile" >"$workDir/baseline.txt"
 		    generic-tokenizer.pl -i "$workDir/baseline.txt" >"$workDir/baseline.out"
 		    # 2. get IOB gold output
-		    tmp=$(mktemp --tmpdir "$progName.baseline.XXXXXXXXXX")
-		    untokenize.pl -i -f UD -C 1 "$testFile" >$tmp
+		    untokenize.pl -i -f UD -C 1 "$testFile" >"$workDir/gold.out"
 		    # 3. eval
-		    evaluate.pl "$workDir/baseline.out:2" "$tmp:2" >"$workDir/baseline.eval"
+		    evaluate.pl "$workDir/baseline.out:2" "$workDir/gold.out:2" >"$workDir/baseline.eval"
 		    cat "$workDir/baseline.eval"
 
 		    

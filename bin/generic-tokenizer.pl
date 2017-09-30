@@ -62,12 +62,9 @@ my $replaceLineBreaksWithSpaces = (defined($opt{l})) ? 0 : 1 ;
 open(F, "<:encoding(utf-8)", $inputFile) or die "Cannot open '$inputFile'";
 my $lastPrintedSpace=1; # no need for space at the beginning
 while (<F>) {
-    my $line;
+    my $line = $_;
     if ($replaceLineBreaksWithSpaces) {
-	chomp;
-	$line = $_." "; # adding space at the end to replace end of line
-    }  else {
-	$line = $_;
+	$line =~ s/\n/ /g;
     }
     my $pos = 0;
     while ($pos<length($line)) {
