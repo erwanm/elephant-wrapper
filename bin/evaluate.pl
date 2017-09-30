@@ -25,7 +25,7 @@ sub usage {
 	print $fh "\n";
  	print $fh "  Options:\n";
 	print $fh "    -h print this help message.\n";
-#	print $fh "    -c <IOB column> default: $iobCol.\n";
+	print $fh "    -c <default IOB column> default: $iobCol.\n";
  	print $fh "\n";
 }
 
@@ -34,7 +34,7 @@ sub usage {
 sub readFileCol {
     my ($f) = @_;
 
-    my $colno=2;
+    my $colno=$iobCol;
     if ($f =~ m/:/) {
 	($f, $colno)= ($f =~ m/^(.*):(.*)$/);
     }
@@ -53,15 +53,14 @@ sub readFileCol {
 
 # PARSING OPTIONS
 my %opt;
-getopts('h', \%opt ) or  ( print STDERR "Error in options" &&  usage(*STDERR) && exit 1);
+getopts('hc:', \%opt ) or  ( print STDERR "Error in options" &&  usage(*STDERR) && exit 1);
 usage(*STDOUT) && exit 0 if $opt{h};
 print STDERR "2 arguments expected, but ".scalar(@ARGV)." found: ".join(" ; ", @ARGV)  && usage(*STDERR) && exit 1 if (scalar(@ARGV) != 2);
 
 my $predFile =  $ARGV[0];
 my $goldFile =  $ARGV[1];
 
-#$iobCol=$opt{c} if (defined($opt{c}));
-#$iobCol--;
+$iobCol=$opt{c} if (defined($opt{c}));
 
 
 my $answersPred = readFileCol($predFile);

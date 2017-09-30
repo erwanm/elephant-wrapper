@@ -19,7 +19,7 @@ my %parsemeFormat = ("tokenCol" => 2, "noSpaceAfterCol" => 3,  "noSpaceAfterValu
 my %udFormat = ("tokenCol" => 2, "noSpaceAfterCol" => 10,  "noSpaceAfterValue" => "SpaceAfter=No");
 my %stdFormats = ( "parseme" =>  \%parsemeFormat, "UD" => \%udFormat );
 
-my $defaultFormat = "parseme";
+my $defaultFormat = "UD";
 
 my $format = $stdFormats{$defaultFormat};
 
@@ -29,6 +29,11 @@ my $sentenceLabel=0;
 
 my $contractionMgmt = 0;
 my $indexCol; # used only if $contractionMgmt is 1.
+
+my $bLabel ="B";
+my $iLabel ="I";
+my $oLabel ="O";
+my $sLabel;
 
 sub usage {
 	my $fh = shift;
@@ -51,10 +56,14 @@ sub usage {
 	print $fh "    -v <'no space after' value> value that the column contains which indicates 'no space after'. Default: ".$stdFormats{$defaultFormat}->{noSpaceAfterValue}."\n";
  	print $fh "    -C <index col no> deal with potential contractions in the data, e.g. actual token \"didn't\" at index 3-4\n";
  	print $fh "       is followed by \"did\" at index 3 then \"'nt\" at index 4. The script will keep only the \n";
-	print $fh "       actual token, recognized by its interval index N-M, and ignore indexes N to M.\n";
-	print $fh "    -S mark sentence begining as well (with label S). Default: only tokens (labels T,I,O). Used\n";
- 	print $fh "       only in IOB mode (-i enabled).\n";
- 	print $fh "\n";
+	print $fh "       actual token, recognized by its interval index N-M, and ignore indexes N to M. Regular\n";
+	print $fh "       indexes (I;e., not ranges) must follow the pattern \\d+(\\.\\d+)?\n";
+	print $fh "    -S <S label> mark sentence begining as well with <S label>. Default: only tokens (labels B,I,O).\n";
+ 	print $fh "       Used only in IOB mode (-i enabled).\n";
+	print $fh "    -B <B label> to use if label is not B.\n";
+        print $fh "    -I <I label> to use if label is not I.\n";
+        print $fh "    -O <O label> to use if label is not O.\n";
+  	print $fh "\n";
 }
 
 
@@ -62,16 +71,18 @@ sub printToken {
     my ($token, $spaceBefore, $newSentence) = @_;
 
     if ($iobFormat) {
-	print ord(" ")."\tO\n" if ($spaceBefore);
-	my $annot = ($newSentence && $sentenceLabel) ? "\tS" : "\tT";
-	my $c = substr($token,0,1);
-	$annot .= "\t$c" if ($debug);
-	print ord($c).$annot."\n";
-	for (my $i=1; $i<length($token); $i++) {
-	    my $annot = "\tI";
-	    my $c = substr($token,$i,1);
+	print ord(" ")."\t$oLabel\n" if ($spaceBefore);
+	if (length($token)>0) {
+	    my $annot = ($newSentence && $sentenceLabel) ? "\t$sLabel" : "\t$bLabel";
+	    my $c = substr($token,0,1);
 	    $annot .= "\t$c" if ($debug);
 	    print ord($c).$annot."\n";
+	    for (my $i=1; $i<length($token); $i++) {
+		my $annot = "\t$iLabel";
+		my $c = substr($token,$i,1);
+		$annot .= "\t$c" if ($debug);
+		print ord($c).$annot."\n";
+	    }
 	}
     } else {
 	if (($newSentence) && ($spaceBefore)) {
@@ -87,7 +98,7 @@ sub printToken {
 
 # PARSING OPTIONS
 my %opt;
-getopts('hf:c:s:v:diC:', \%opt ) or  ( print STDERR "Error in options" &&  usage(*STDERR) && exit 1);
+getopts('hf:c:s:v:diC:S:B:I:O:', \%opt ) or  ( print STDERR "Error in options" &&  usage(*STDERR) && exit 1);
 usage(*STDOUT) && exit 0 if $opt{h};
 print STDERR "1 arguments expected, but ".scalar(@ARGV)." found: ".join(" ; ", @ARGV)  && usage(*STDERR) && exit 1 if (scalar(@ARGV) != 1);
 
@@ -104,7 +115,13 @@ $format->{"noSpaceAfterCol"} = $opt{s} if defined($opt{s});
 $format->{"noSpaceAfterValue"}  = $opt{v} if defined($opt{v});
 $debug = 1 if  (defined($opt{d}));
 $iobFormat = 1 if  (defined($opt{i}));
-$sentenceLabel=1 if (defined($opt{S}));
+
+$sLabel=$opt{S};
+$bLabel =$opt{B} if (defined($opt{B}));
+$iLabel =$opt{I} if (defined($opt{I}));
+$oLabel =$opt{O} if (defined($opt{O}));
+
+
 
 if (defined($opt{C})) {
     $contractionMgmt = 1 ;
@@ -129,11 +146,11 @@ while (<F>) {
     if  (m/./) {
 	if (!m/^#/) {
 	    chomp;
-	    my @cols = split;
+	    my @cols = split("\t", $_);
 	    my $processToken = 1;
 	    if ($contractionMgmt) {
 		my $index=$cols[0];
-		if ($index =~ m/^\d+$/) {
+		if ($index =~ m/^\d+(\.\d+)?$/) {
 		    if ($index <= $cEnd) {
 			#			print STDERR "DEBUG ignoring index $index\n";
 			# REMARK: we assume that the 'no space after' mark is NEVER in the expanded range!
@@ -162,6 +179,7 @@ while (<F>) {
 	$cEnd = -1;
     }
 }
+printToken("", !$noSpaceAfter, 1); # apply the "noSpaceAfter" for the last token
 close(F);
 
 print STDERR "Info: read $total tokens.\n";

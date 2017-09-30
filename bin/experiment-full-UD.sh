@@ -70,6 +70,19 @@ while read patternFile; do
 		if [ ! -s "$workDir/elman.model" ]; then
 		    train-lm-from-UD-corpus.sh "$trainFile" "$workDir/elman.model"
 		fi
+		if [ ! -s "$workDir/baseline.eval" ]; then # apply generic tokenizer to test data
+		    # 1. get text file from test UD conllu file
+		    untokenize.pl -f UD -C 1 "$testFile" >"$workDir/baseline.txt"
+		    generic-tokenizer.pl -i "$workDir/baseline.txt" >"$workDir/baseline.out"
+		    # 2. get IOB gold output
+		    tmp=$(mktemp --tmpdir "$progName.baseline.XXXXXXXXXX")
+		    untokenize.pl -i -f UD -C 1 "$testFile" >$tmp
+		    # 3. eval
+		    evaluate.pl "$workDir/baseline.out:2" "$tmp:2" >"$workDir/baseline.eval"
+		    cat "$workDir/baseline.eval"
+
+		    
+		fi
 		workDir2="$workDir/$p"
 		[ -d "$workDir2" ] || mkdir "$workDir2"
 		train-tokenizer-from-UD-corpus.sh "$trainFile" "$patternFile" "$workDir2/crf.model"

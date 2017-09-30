@@ -59,7 +59,7 @@ if [ ! -z "$iobOpt" ]; then
     
     # fix obviously wrong labels
     tmp=$(mktemp --tmpdir "$progName.iob.XXXXXXXXX")
-    iob-fix-missing-b.pl -b T "$output" $tmp
+    iob-fix-missing-b.pl "$output" $tmp
     cat $tmp >$output
 
     # get IOB gold output

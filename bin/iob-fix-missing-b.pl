@@ -42,16 +42,16 @@ sub usage {
 
 # PARSING OPTIONS
 my %opt;
-getopts('hb:i:o:c:', \%opt ) or  ( print STDERR "Error in options" &&  usage(*STDERR) && exit 1);
+getopts('hB:I:O:c:', \%opt ) or  ( print STDERR "Error in options" &&  usage(*STDERR) && exit 1);
 usage(*STDOUT) && exit 0 if $opt{h};
 print STDERR "2 arguments expected, but ".scalar(@ARGV)." found: ".join(" ; ", @ARGV)  && usage(*STDERR) && exit 1 if (scalar(@ARGV) != 2);
 
 my $inputFile =  $ARGV[0];
 my $outputFile =  $ARGV[1];
 
-$bLabel =$opt{b} if (defined($opt{b}));
-$iLabel =$opt{i} if (defined($opt{i}));
-$oLabel =$opt{o} if (defined($opt{o}));
+$bLabel =$opt{B} if (defined($opt{B}));
+$iLabel =$opt{I} if (defined($opt{I}));
+$oLabel =$opt{O} if (defined($opt{O}));
 
 $iobCol=$opt{c} if (defined($opt{c}));
 $iobCol--;
