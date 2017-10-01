@@ -74,13 +74,33 @@ foreach my $dataset (keys %data) {
 }
 
 if (defined($latexTable)) {
+    my @baselineBetterDatasets;
     my $m = $latexTable;
     print "Dataset & size (characters) & Baseline (% error rate) & $m \\\\\n";
+    my $sumImprov=0;
+    my $nb=0;
+    my @improvs;
     foreach my $dataset (sort keys %data) {
 	if ($data{$dataset}->{$m} ne "NA") {
-	    printf("%${maxLength}s\t& %9d\t& %7.4f\t& %7.4f\t\\\\\n", $dataset, $size{$dataset}, $data{$dataset}->{baseline}*100, $data{$dataset}->{$m}*100);
+	    my $b = $data{$dataset}->{baseline};
+	    my $s = $data{$dataset}->{$m};
+	    printf("%${maxLength}s\t& %9d\t& %7.4f\t& %7.4f\t\\\\\n", $dataset, $size{$dataset}, $b*100, $s*100);
+	    if (($b != 0) && ($b>$s))  {
+		$sumImprov += ($s -$b) / $b;
+		push(@improvs, ($s -$b) / $b);
+#		print STDERR "improv=".($s -$b) / $b."; sumImprov = $sumImprov, nb=$nb\n";
+		$nb++;
+	    }
+	    if ($b < $s) {
+		push(@baselineBetterDatasets, $dataset);
+	    }
 	}
     }
+    $sumImprov = $sumImprov / $nb * 100;
+    print "Info: ".scalar(@baselineBetterDatasets)." datasets for which baseline performs better than system: [".join(",",@baselineBetterDatasets)."]\n";
+    print "Info: avg improvement WITHOUT the cases above = $sumImprov %\n";
+ #   @improvs=sort { $a <=> $b } @improvs;
+  #  print join(" ",@improvs)."\n";
     
 } else {
     foreach my $method (sort keys %sum) {
