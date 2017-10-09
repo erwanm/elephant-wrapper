@@ -46,7 +46,9 @@ inputDir="$1"
 for dataDir in "$inputDir"/*; do
     if [ -d "$dataDir" ]; then
 	data=$(basename "$dataDir")
-	trainFile=$(ls $dataDir/*train*.conllu)
-	TODO get code from filename here
+	file=$(ls $dataDir/*.conllu | head -n 1)
+	b=$(basename "$file")
+	code=${b%%[-_]*}
 	echo -e "$code\t$data"
+    fi
 done | sort +0 -1 -u
