@@ -86,14 +86,14 @@ sub printSizeSubsets {
 
     foreach my $subsetId (keys %$subsets) {
 	my $nb = scalar(@{$subsets->{$subsetId}});
-	printf("$subsetId: %d (%6.2 %%)", $nb , $nb * 100 / $total);
+	printf("$subsetId: %d (%6.2f %%)\n", $nb , $nb * 100 / $total);
     }
 }
 
 
 # PARSING OPTIONS
 my %opt;
-getopts('hsb:a:p', \%opt ) or  ( print STDERR "Error in options" &&  usage(*STDERR) && exit 1);
+getopts('hsb:a:pv', \%opt ) or  ( print STDERR "Error in options" &&  usage(*STDERR) && exit 1);
 usage(*STDOUT) && exit 0 if $opt{h};
 print STDERR "2 arguments expected, but ".scalar(@ARGV)." found: ".join(" ; ", @ARGV)  && usage(*STDERR) && exit 1 if (scalar(@ARGV) != 2);
 
@@ -106,6 +106,7 @@ my $outputPrefix = (defined($opt{b})) ? $opt{b} : $inputFile.".";
 my $outputSuffix = (defined($opt{a})) ? $opt{a} : "";
 
 my $proportion = defined($opt{p});
+die "Error: invalid proportion $N with option -p, N must be lower than 1" if ($N>1);
 my $verbose =  defined($opt{v});
 
 my @corpus;
