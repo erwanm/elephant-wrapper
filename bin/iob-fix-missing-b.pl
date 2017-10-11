@@ -31,6 +31,7 @@ sub usage {
  	print $fh "  Options:\n";
 	print $fh "    -h print this help message.\n";
 	print $fh "    -c <IOB column> default: $iobCol.\n";
+	print $fh "    -s single column as output: print only the IOB label (default: all columns)\n";
 	print $fh "    -B <B label> to use if label is not B.\n";
 	print $fh "    -I <I label> to use if label is not I.\n";
 	print $fh "    -O <O label> to use if label is not O.\n";
@@ -42,7 +43,7 @@ sub usage {
 
 # PARSING OPTIONS
 my %opt;
-getopts('hB:I:O:c:', \%opt ) or  ( print STDERR "Error in options" &&  usage(*STDERR) && exit 1);
+getopts('hB:I:O:c:s', \%opt ) or  ( print STDERR "Error in options" &&  usage(*STDERR) && exit 1);
 usage(*STDOUT) && exit 0 if $opt{h};
 print STDERR "2 arguments expected, but ".scalar(@ARGV)." found: ".join(" ; ", @ARGV)  && usage(*STDERR) && exit 1 if (scalar(@ARGV) != 2);
 
@@ -56,6 +57,8 @@ $oLabel =$opt{O} if (defined($opt{O}));
 $iobCol=$opt{c} if (defined($opt{c}));
 $iobCol--;
 
+my $singleColOutput = defined($opt{s});
+
 my $nb=0;
 my $lineNo=1;
 my $outside=1;
@@ -64,7 +67,7 @@ open(F, "<:encoding(utf-8)", $inputFile) or die "Cannot open '$inputFile'";
 open(OUT, ">:encoding(utf-8)", $outputFile) or die "Cannot open '$outputFile' for writing";
 while (<F>) {
     chomp;
-    my @cols=split;
+    my @cols=split("\t",$_);
     my $iob = $cols[$iobCol];
     if ($iob eq $bLabel) {
 	$outside=0;
@@ -79,11 +82,16 @@ while (<F>) {
     } else {
 	die "Error: not an IOB label line $lineNo, column ".($iobCol+1).": '$iob'";
     }
-    print OUT "$iob\n";
+    $cols[$iobCol] = $iob;
+    if ($singleColOutput) {
+	print OUT "$iob\n";
+    } else {
+	print OUT join("\t", @cols)."\n";
+    }
     $lineNo++;
 }
 close(F);
 close(OUT);
 $lineNo--;
-print STDERR "Info: read $lineNo lines, replace $nb I labels with B labels.\n";
+print STDERR "Info: read $lineNo lines, replaced $nb I labels with B labels.\n";
 
