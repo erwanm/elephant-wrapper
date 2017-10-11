@@ -140,12 +140,12 @@ if [ ! -z "$iobOpt" ]; then
 	# get IOB gold output
 	untokenize.pl -B T -i -f UD -C 1 "$input" >$textFile
 
-	if [ -z "$rmOutput" ]; then  # if no output file, print to STDERR
-	    redirectOutput=" 1>&2"
-	else
+	if [ -z "$rmOutput" ]; then 
 	    redirectOutput=" >\"$output.eval\""
+	else  # if no output file, print to STDERR
+	    redirectOutput=" 1>&2"
 	fi
-	command="evaluate.pl \"$output:1\" \"$textFile:2\" $redirectOutput"
+	command="evaluate.pl \"$output:2\" \"$textFile:2\" $redirectOutput"
 	eval "$command"
     fi
     
