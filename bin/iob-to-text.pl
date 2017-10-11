@@ -13,7 +13,7 @@ use Getopt::Std;
 
 binmode(STDOUT, ":utf8");
 
-my $progname = "iob-output-to-text.pl";
+my $progname = "iob-to-text.pl";
 
 my $bLabel ="B";
 my $iLabel ="I";
@@ -33,9 +33,9 @@ sub usage {
 	print $fh "    -h print this help message.\n";
 	print $fh "    -c <IOB column> default: $iobCol.\n";
 	print $fh "    -u <unicode value column> default: $unicodeCol.\n";
-	print $fh "    -b <B label> to use if label is not B.\n";
-	print $fh "    -i <I label> to use if label is not I.\n";
-	print $fh "    -o <O label> to use if label is not O.\n";
+	print $fh "    -B <B label> to use if label is not B.\n";
+	print $fh "    -I <I label> to use if label is not I.\n";
+	print $fh "    -O <O label> to use if label is not O.\n";
 	print $fh "    -n print the non-tokenized text instead, i.e. just convert\n";
 	print $fh "       unicode points values to characters.\n";
  	print $fh "\n";
@@ -77,9 +77,12 @@ while (<F>) {
     my $unicode = $cols[$unicodeCol];
     if ($tokenize) {
 	if ($iob eq $bLabel) {
-	    print OUT " " if (!$first);
-	    $first = 0;
-	    print "$token" if (length($token)>0);
+#	    print STDERR "DEBUG B: unicode=$unicode, token='$token', first=$first\n";
+	    if (length($token)>0) {
+		print OUT " " if (!$first);
+		$first = 0;
+		print OUT "$token" ;
+	    }
 	    $token=chr($unicode);
 	} elsif ($iob eq $iLabel) {
 	    $token .= chr($unicode);
@@ -91,8 +94,10 @@ while (<F>) {
     }
     $lineNo++;
 }
-print " " if (!$first);
-print "$token" if (length($token)>0);
+if (length($token)>0) {
+    print OUT " " if (!$first);
+    print OUT "$token" ;
+}
 close(F);
 close(OUT);
 $lineNo--;
