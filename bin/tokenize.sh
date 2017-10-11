@@ -130,7 +130,7 @@ if [ ! -z "$iobOpt" ]; then
 
     if [ ! -z "$missingBScript" ]; then # apply missing Bs script
 	tmp=$(mktemp --tmpdir "$progName.iob.XXXXXXXXX")
-	iob-fix-missing-b.pl "$output" "$tmp"
+	iob-fix-missing-b.pl -B T "$output" "$tmp"
 	cat "$tmp" >"$output"
 	rm -f "$tmp"
     fi
@@ -138,7 +138,7 @@ if [ ! -z "$iobOpt" ]; then
     # if not UD2 format, we're done; otherwise evaluation
     if [ ! -z "$ud2Format" ]; then
 	# get IOB gold output
-	untokenize.pl -i -f UD -C 1 "$input" >$textFile
+	untokenize.pl -B T -i -f UD -C 1 "$input" >$textFile
 
 	if [ -z "$rmOutput" ]; then  # if no output file, print to STDERR
 	    redirectOutput=" 1>&2"

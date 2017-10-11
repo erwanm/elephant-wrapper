@@ -32,9 +32,9 @@ sub usage {
 	print $fh "    -h print this help message.\n";
 	print $fh "    -d debug for iob mode: print 3rd column with character.\n";
 	print $fh "    -i output in IOB format (one char by line: unicode value then IOB label)\n";
-	print $fh "    -b <B label> to use if label is not B (used only if -i).\n";
-	print $fh "    -i <I label> to use if label is not I (used only if -i).\n";
-	print $fh "    -o <O label> to use if label is not O (used only if -i).\n";
+	print $fh "    -B <B label> to use if label is not B (used only if -i).\n";
+	print $fh "    -I <I label> to use if label is not I (used only if -i).\n";
+	print $fh "    -O <O label> to use if label is not O (used only if -i).\n";
  	print $fh "    -l do not replace line breaks with a space character (default: replace).\n";
  	print $fh "\n";
 }

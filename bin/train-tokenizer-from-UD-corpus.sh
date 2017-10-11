@@ -50,7 +50,7 @@ options=""
 
 # extract unicode chars + IOB labels from UD file
 iobFile=$(mktemp --tmpdir "$progName.iob.XXXXXXXXX")
-untokenize.pl -i -f UD -C 1 "$input" >$iobFile
+untokenize.pl -B T -i -f UD -C 1 "$input" >$iobFile
 #echo $iobFile
 
 patternFile=$(mktemp --tmpdir "$progName.pat.XXXXXXXXX")

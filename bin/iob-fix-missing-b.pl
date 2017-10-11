@@ -31,9 +31,9 @@ sub usage {
  	print $fh "  Options:\n";
 	print $fh "    -h print this help message.\n";
 	print $fh "    -c <IOB column> default: $iobCol.\n";
-	print $fh "    -b <B label> to use if label is not B.\n";
-	print $fh "    -i <I label> to use if label is not I.\n";
-	print $fh "    -o <O label> to use if label is not O.\n";
+	print $fh "    -B <B label> to use if label is not B.\n";
+	print $fh "    -I <I label> to use if label is not I.\n";
+	print $fh "    -O <O label> to use if label is not O.\n";
  	print $fh "\n";
 }
 

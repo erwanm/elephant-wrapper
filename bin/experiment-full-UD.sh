@@ -73,9 +73,9 @@ while read patternFile; do
 		if [ ! -s "$workDir/baseline.eval" ]; then # apply generic tokenizer to test data
 		    # 1. get text file from test UD conllu file
 		    untokenize.pl -f UD -C 1 "$testFile" >"$workDir/baseline.txt"
-		    generic-tokenizer.pl -i "$workDir/baseline.txt" >"$workDir/baseline.out"
+		    generic-tokenizer.pl -B T -i "$workDir/baseline.txt" >"$workDir/baseline.out"
 		    # 2. get IOB gold output
-		    untokenize.pl -i -f UD -C 1 "$testFile" >"$workDir/gold.out"
+		    untokenize.pl -B T -i -f UD -C 1 "$testFile" >"$workDir/gold.out"
 		    # 3. eval
 		    evaluate.pl "$workDir/baseline.out:2" "$workDir/gold.out:2" >"$workDir/baseline.eval"
 		    cat "$workDir/baseline.eval"
@@ -85,9 +85,9 @@ while read patternFile; do
 		workDir2="$workDir/$p"
 		[ -d "$workDir2" ] || mkdir "$workDir2"
 		train-tokenizer-from-UD-corpus.sh "$trainFile" "$patternFile" "$workDir2/crf.model"
-		apply-tokenizer-to-UD-corpus.sh -i "$testFile" "$workDir2/crf.model"  "$workDir2/crf.output"
+		tokenize.sh -c -I -i "$testFile" -o "$workDir2/crf.output"  "$workDir2/crf.model" 
 		train-tokenizer-from-UD-corpus.sh -e "$workDir/elman.model" "$trainFile" "$patternFile" "$workDir2/elman.model"
-		apply-tokenizer-to-UD-corpus.sh -i "$testFile" "$workDir2/elman.model"  "$workDir2/elman.output"
+		tokenize.sh -c -I -i "$testFile" -o  "$workDir2/elman.output" "$workDir2/elman.model" 
 	    else
 		echo "Warning: no $ignore file in $dataDir, ignoring" 1>&2
 	    fi
