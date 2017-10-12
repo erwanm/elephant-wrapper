@@ -16,6 +16,7 @@ force=""
 iso639mapping=""
 elephantModelDirName="elephant.model"
 splitDevFile=""
+missingBScript="yep"
 
 function usage {
   echo
@@ -50,6 +51,9 @@ function usage {
   echo "       no training file is found (this is a workaround for the two languages in"
   echo "       UD2 for which only a dev file is supplied: UD_Kazakh and UD_Uyghur)."
   echo "       Example: -s 0.8 means 80% train set, 20% test set."
+  echo "    -b do not apply script to fix missing B labels in testing: applied by"
+  echo "       default, but should not be applied if tokens can include whitespaces."
+  echo "       Ignored if -t is supplied."
   echo 
 }
 
@@ -57,7 +61,7 @@ function usage {
 
 
 OPTIND=1
-while getopts 'htp:P:efln:s:' option ; do 
+while getopts 'htp:P:efln:s:b' option ; do 
     case $option in
 	"h" ) usage
  	      exit 0;;
@@ -69,6 +73,7 @@ while getopts 'htp:P:efln:s:' option ; do
 	"l" ) iso639mapping="yep";;
 	"n" ) elephantModelDirName="$OPTARG";;
 	"s" ) splitDevFile="$OPTARG";;
+	"b" ) missingBScript="";;
  	"?" ) 
 	    echo "Error, unknow option." 1>&2
             printHelp=1;;
@@ -138,7 +143,7 @@ for dataDir in "$inputDir"/*; do
 		    if [ ! -s "$workDir/$elephantModelDirName/wapiti" ]; then
 			echo "An error occured during training. Command was: '$command'" 1>&2
 			echo "Skipping dataset '$data'" 1>&2
-			testFile="" # skip testing
+			testing="" # skip testing
 		    fi
 		fi
 
@@ -149,8 +154,13 @@ for dataDir in "$inputDir"/*; do
 		    else
 			# get IOB gold output
 			untokenize.pl -i -f UD -C 1 -B T "$testFile" >"$workDir/gold.iob"
+			opts=""
+			if [ -z "$missingBScript" ]; then
+			    opts="-n"
+			fi
 			# remark: evaluation is also done by tokenize.sh
-			tokenize.sh -c -I -i "$testFile" -o "$workDir/test.iob"  "$workDir/$elephantModelDirName"
+			command="tokenize.sh $opts -c -I -i \"$testFile\" -o \"$workDir/test.iob\"  \"$workDir/$elephantModelDirName\""
+			eval "$command"
 
 			# the following 3 steps are for baseline tokenizer only:
 			# 1. get text file from test UD conllu file
