@@ -182,5 +182,5 @@ while (<F>) {
 printToken("", !$noSpaceAfter, 1); # apply the "noSpaceAfter" for the last token
 close(F);
 
-print STDERR "Info: read $total tokens.\n";
+#print STDERR "Info: read $total tokens.\n";
 

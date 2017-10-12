@@ -10,8 +10,8 @@ function usage {
   echo
   echo "  Generates a file containing pairs <ISO639 code> <UD2 directory> (one by line)"
   echo "  from the full UD2 directory, based on the UD2 naming conventions."
-  echo "  TODO update here. Corpora are read from <UD directory>/<dataset>/*conllu, using the 'train'"
-  echo "  version for training and the 'dev' version for testing."
+  echo "  The ISO639 code (2 or 3 chars) must be the prefix of the filename, i.e.:"
+  echo "    <UD directory>/<dataset>/<iso639>*conllu"
   echo
   echo "  Options:"
   echo "    -h this help"
@@ -48,7 +48,7 @@ for dataDir in "$inputDir"/*; do
 	data=$(basename "$dataDir")
 	file=$(ls $dataDir/*.conllu | head -n 1)
 	b=$(basename "$file")
-	code=${b%%[-_]*}
+	code=${b%%[^a-zA-Z]*}
 	echo -e "$code\t$data"
     fi
 done | sort +0 -1 -u
