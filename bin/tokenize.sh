@@ -19,6 +19,8 @@ output=""
 ud2Format=""
 iobOpt=""
 missingBScript=1
+paramsModelName="elephant"
+
 
 function usage {
   echo
@@ -43,7 +45,9 @@ function usage {
   echo "    -I output provided in IOB format; if used in conjunction with -c, the"
   echo "       evaluation is also performed and the result is either printed to"
   echo "       STDERR or written to <output>.eval if option -o is supplied."
-  echo "    -n do not apply script to fix missing B labels: applied by default if"
+  echo "    -n <parameters model name> name to use for the parameters model directory,"
+  echo "       in case there are several alternatives. Default: '$paramsModelName'."
+  echo "    -b do not apply script to fix missing B labels: applied by default if"
   echo "       -I is provided, but should not be applied if tokens can include"
   echo "       whitespaces. Ignored if -I is not supplied."
   echo "    -p print the list of available models in the default model directory,"
@@ -57,7 +61,7 @@ function usage {
 
 
 OPTIND=1
-while getopts 'hi:o:cInpP' option ; do 
+while getopts 'hi:o:cIn:bpP' option ; do 
     case $option in
 	"h" ) usage
  	      exit 0;;
@@ -65,10 +69,11 @@ while getopts 'hi:o:cInpP' option ; do
 	"o" ) output="$OPTARG";;
 	"c" ) ud2Format=1;;
  	"I" ) iobOpt="-f iob";;
-	"n" ) missingBScript="";;
+	"n" ) paramsModelName="$OPTARG";;
+	"b" ) missingBScript="";;
 	"p" ) for d in $defaultModelDir/*; do if [ -d "$d" ]; then echo $(basename "$d"); fi; done
 	      exit 0;;
-	"P" ) if [ ! -f "$defaultModelDir/$iso639File" ]; then echo "Error: cannot find file $defaultModelDir/$iso639File" 1>&2; exit 1; fi; cut -f 1 "$defaultModelDir/$iso639File"
+	"P" ) if [ ! -f "$defaultModelDir/$iso639File" ]; then echo "Error: cannot find file $defaultModelDir/$iso639File" 1>&2; exit 1; fi; cat "$defaultModelDir/$iso639File"
 	      exit 0;;
  	"?" ) 
 	    echo "Error, unknow option." 1>&2
@@ -90,10 +95,15 @@ modelDir="$1"
 
 if [ ! -d "$modelDir" ]; then
     if [ -d "$defaultModelDir/$modelDir" ]; then
-	modelDir="$defaultModelDir/$modelDir"
+	dataDir="$defaultModelDir/$modelDir"
     else # ISO639 code, look it up in $iso639File
-	modelDir="$defaultModelDir"/$(grep "^$modelDir" $iso639File | cut -f 2)
+	dataDir="$defaultModelDir"/$(grep "^$modelDir" "$defaultModelDir/$iso639File" | cut -f 2)
     fi
+    modelDir="$dataDir/$paramsModelName.elephant-model"
+fi
+if [ ! -s "$modelDir/wapiti" ]; then
+    echo "Error: '$modelDir' is not a valid Elephant model directory" 1>&2
+    exit 1
 fi
 
 if [ -z "$input" ]; then
