@@ -1,7 +1,7 @@
 /*
  *      Wapiti - A linear-chain CRF tool
  *
- * Copyright (c) 2009-2012  CNRS
+ * Copyright (c) 2009-2013  CNRS
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -121,7 +121,7 @@ void rdr_freedat(dat_t *dat) {
  *   available memory, a buffer large enough is allocated and returned. The
  *   caller is responsible to free it. On end-of-file, NULL is returned.
  */
-static char *rdr_readline(FILE *file) {
+char *rdr_readline(FILE *file) {
 	if (feof(file))
 		return NULL;
 	// Initialize the buffer
@@ -522,9 +522,12 @@ dat_t *rdr_readdat(rdr_t *rdr, FILE *file, bool lbl) {
 void rdr_load(rdr_t *rdr, FILE *file) {
 	const char *err = "broken file, invalid reader format";
 	int autouni = rdr->autouni;
+	fpos_t pos;
+	fgetpos(file, &pos);
 	if (fscanf(file, "#rdr#%"PRIu32"/%"PRIu32"/%d\n",
 			&rdr->npats, &rdr->ntoks, &autouni) != 3) {
 		// This for compatibility with previous file format
+		fsetpos(file, &pos);
 		if (fscanf(file, "#rdr#%"PRIu32"/%"PRIu32"\n",
 				&rdr->npats, &rdr->ntoks) != 2)
 			fatal(err);

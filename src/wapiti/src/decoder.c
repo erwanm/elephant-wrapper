@@ -1,7 +1,7 @@
 /*
  *      Wapiti - A linear-chain CRF tool
  *
- * Copyright (c) 2009-2012  CNRS
+ * Copyright (c) 2009-2013  CNRS
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -564,7 +564,7 @@ static void tag_evalsub(job_t *job, uint32_t id, uint32_t cnt, eval_t *eval) {
 			// Tag the sequence with the viterbi
 			const seq_t *seq = dat->seq[s];
 			const uint32_t T = seq->len;
-			uint32_t out[T];
+			uint32_t *out = xmalloc(sizeof(uint32_t) * T);
 			tag_viterbi(mdl, seq, out, NULL, NULL);
 			// And check for eventual (probable ?) errors
 			bool err = false;
@@ -574,6 +574,7 @@ static void tag_evalsub(job_t *job, uint32_t id, uint32_t cnt, eval_t *eval) {
 			eval->tcnt += T;
 			eval->scnt += 1;
 			eval->serr += err;
+			free(out);
 		}
 	}
 }

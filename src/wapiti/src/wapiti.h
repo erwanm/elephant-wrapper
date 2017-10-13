@@ -1,7 +1,7 @@
 /*
  *      Wapiti - A linear-chain CRF tool
  *
- * Copyright (c) 2009-2012  CNRS
+ * Copyright (c) 2009-2013  CNRS
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
 #ifndef wapiti_h
 #define wapiti_h
 
-#define VERSION "1.4.0"
+#define VERSION "1.5.0"
 
 /* XVM_ANSI:
  *   By uncomenting the following define, you can force wapiti to not use SSE2

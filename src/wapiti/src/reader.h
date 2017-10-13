@@ -1,7 +1,7 @@
 /*
  *      Wapiti - A linear-chain CRF tool
  *
- * Copyright (c) 2009-2012  CNRS
+ * Copyright (c) 2009-2013  CNRS
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,6 +68,8 @@ dat_t *rdr_readdat(rdr_t *rdr, FILE *file, bool lbl);
 
 void rdr_load(rdr_t *rdr, FILE *file);
 void rdr_save(const rdr_t *rdr, FILE *file);
+
+char *rdr_readline(FILE *file);
 
 #endif
 

@@ -1,7 +1,7 @@
 /*
  *      Wapiti - A linear-chain CRF tool
  *
- * Copyright (c) 2009-2012  CNRS
+ * Copyright (c) 2009-2013  CNRS
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -85,6 +85,9 @@ struct opt_s {
 	bool      lblpost;
 	uint32_t  nbest;
 	bool      force;
+	// Options for model dump
+	int       prec;
+	bool      all;
 };
 
 extern const opt_t opt_defaults;
