@@ -1,0 +1,55 @@
+
+iter: 0
+valid log probability: -265440.148733
+PPL net: 9.997151
+Error 175834 / 265473 = 0.662342
+
+iter: 1
+valid log probability: -264440.573717
+PPL net: 9.910852
+Error 175499 / 265473 = 0.661080
+
+iter: 2
+valid log probability: -263721.881284
+PPL net: 9.849264
+Error 175568 / 265473 = 0.661340
+
+iter: 3
+valid log probability: -258592.161653
+PPL net: 9.420649
+Error 172571 / 265473 = 0.650051
+
+iter: 4
+valid log probability: -255292.835041
+PPL net: 9.154882
+Error 171233 / 265473 = 0.645011
+
+iter: 5
+valid log probability: -253013.185601
+PPL net: 8.975644
+Error 170105 / 265473 = 0.640762
+
+iter: 6
+valid log probability: -250939.463471
+PPL net: 8.815647
+Error 169533 / 265473 = 0.638607
+
+iter: 7
+valid log probability: -249245.138565
+PPL net: 8.687041
+Error 168663 / 265473 = 0.635330
+
+iter: 8
+valid log probability: -247984.975484
+PPL net: 8.592609
+Error 168831 / 265473 = 0.635963
+
+iter: 9
+valid log probability: -246995.676934
+PPL net: 8.519194
+Error 167908 / 265473 = 0.632486
+
+iter: 10
+valid log probability: -246312.872568
+PPL net: 8.468889
+Error 167586 / 265473 = 0.631273

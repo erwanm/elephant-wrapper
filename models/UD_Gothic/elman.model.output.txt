@@ -1,0 +1,40 @@
+
+iter: 0
+valid log probability: -36582.035662
+PPL net: 6.931869
+Error 26014 / 43506 = 0.597941
+
+iter: 1
+valid log probability: -35851.581614
+PPL net: 6.668999
+Error 25689 / 43506 = 0.590470
+
+iter: 2
+valid log probability: -35631.416451
+PPL net: 6.591740
+Error 25804 / 43506 = 0.593114
+
+iter: 3
+valid log probability: -35554.580942
+PPL net: 6.564988
+Error 25757 / 43506 = 0.592033
+
+iter: 4
+valid log probability: -34570.380347
+PPL net: 6.231775
+Error 24798 / 43506 = 0.569990
+
+iter: 5
+valid log probability: -34074.097847
+PPL net: 6.070222
+Error 24465 / 43506 = 0.562336
+
+iter: 6
+valid log probability: -33829.295829
+PPL net: 5.992081
+Error 24292 / 43506 = 0.558360
+
+iter: 7
+valid log probability: -33731.789464
+PPL net: 5.961238
+Error 24110 / 43506 = 0.554176

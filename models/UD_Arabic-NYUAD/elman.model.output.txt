@@ -1,0 +1,20 @@
+
+iter: 0
+valid log probability: -0.449608
+PPL net: 1.000005
+Error 1 / 201197 = 0.000005
+
+iter: 1
+valid log probability: -0.495404
+PPL net: 1.000006
+Error 1 / 201197 = 0.000005
+
+iter: 2
+valid log probability: -0.472414
+PPL net: 1.000005
+Error 1 / 201197 = 0.000005
+
+iter: 3
+valid log probability: -0.495553
+PPL net: 1.000006
+Error 1 / 201197 = 0.000005

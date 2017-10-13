@@ -1,0 +1,70 @@
+
+iter: 0
+valid log probability: -4408.561784
+PPL net: 11.957062
+Error 2886 / 4091 = 0.705451
+
+iter: 1
+valid log probability: -4221.633459
+PPL net: 10.762965
+Error 2831 / 4091 = 0.692007
+
+iter: 2
+valid log probability: -4139.638295
+PPL net: 10.277538
+Error 2788 / 4091 = 0.681496
+
+iter: 3
+valid log probability: -4078.198805
+PPL net: 9.928208
+Error 2740 / 4091 = 0.669763
+
+iter: 4
+valid log probability: -4031.550543
+PPL net: 9.670930
+Error 2697 / 4091 = 0.659252
+
+iter: 5
+valid log probability: -3999.274940
+PPL net: 9.496833
+Error 2669 / 4091 = 0.652408
+
+iter: 6
+valid log probability: -3972.955085
+PPL net: 9.357185
+Error 2630 / 4091 = 0.642875
+
+iter: 7
+valid log probability: -3946.797388
+PPL net: 9.220432
+Error 2616 / 4091 = 0.639452
+
+iter: 8
+valid log probability: -3929.526865
+PPL net: 9.131238
+Error 2604 / 4091 = 0.636519
+
+iter: 9
+valid log probability: -3924.038878
+PPL net: 9.103076
+Error 2580 / 4091 = 0.630653
+
+iter: 10
+valid log probability: -3850.463533
+PPL net: 8.733805
+Error 2542 / 4091 = 0.621364
+
+iter: 11
+valid log probability: -3815.805490
+PPL net: 8.565086
+Error 2534 / 4091 = 0.619408
+
+iter: 12
+valid log probability: -3802.210077
+PPL net: 8.499795
+Error 2507 / 4091 = 0.612809
+
+iter: 13
+valid log probability: -3799.587011
+PPL net: 8.487256
+Error 2501 / 4091 = 0.611342
