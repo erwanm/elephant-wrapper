@@ -132,12 +132,12 @@ for dataDir in "$inputDir"/*; do
 		# TRAINING
 		workDir="$outputDir/$data"
 		prefix="$workDir/$paramsModelName"
-		opts=""
+		opts="-q"
 		[ -d "$workDir" ] || mkdir "$workDir"
 		processWithElman="" # by default wapiti model without Elman
 		if [ ! -z "$elman" ]; then
 		    if [ ! -s "$workDir/elman.model" ]; then # Training Elman LM
-			train-lm-from-UD-corpus.sh "$trainFile" "$workDir/elman.model"
+			train-lm-from-UD-corpus.sh -q "$trainFile" "$workDir/elman.model"
 		    fi
 		    opts="$opts -e \"$workDir/elman.model\""
 		    if [ ! -s "$prefix.elephant-model/elman" ]; then # require Elman in wapiti model

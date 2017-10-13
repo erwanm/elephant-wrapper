@@ -6,6 +6,7 @@ progName=$(basename "$BASH_SOURCE")
 
 percentTrain=80
 optThreads=""
+quiet=""
 
 function usage {
   echo
@@ -17,6 +18,7 @@ function usage {
   echo "    -p <percentage training set> The rest is used as validation set;"
   echo "       Default: $percentTrain."
   echo "    -t <nb threads>"
+  echo "    -q quite mode: don't print progress to STDOUT"
   echo
 }
 
@@ -24,12 +26,13 @@ function usage {
 
 
 OPTIND=1
-while getopts 'hp:t:' option ; do 
+while getopts 'hp:t:q' option ; do 
     case $option in
 	"h" ) usage
  	      exit 0;;
 	"p") percentTrain="$OPTARG";;
 	"t") optThreads="-threads $OPTARG";;
+	"q") quiet="yes";;
  	"?" ) 
 	    echo "Error, unknow option." 1>&2
             printHelp=1;;
@@ -57,13 +60,19 @@ untokenize.pl -i -f UD -C 1 $input  >$iobFile
 total=$(cat $iobFile | wc -l)
 sizeTrain=$(( $total * $percentTrain / 100 ))
 sizeValid=$(( $total - $sizeTrain ))
-echo "Info: $total chars, splitting $percentTrain % train = $sizeTrain for training + $sizeValid for validation"
+if [ -z "$quiet" ]; then
+    echo "Info: $total chars, splitting $percentTrain % train = $sizeTrain for training + $sizeValid for validation"
+fi
 head -n $sizeTrain $iobFile | cut -f 1 | tr '\n' ' ' > $iobFile.train
 tail -n $sizeValid $iobFile | cut -f 1 | tr '\n' ' ' > $iobFile.valid
 
 # training model
 rm -f "$modelFile"
-command="elman $optThreads -class 1 -train $iobFile.train -rnnlm \"$model\" -valid $iobFile.valid"
+redirect=""
+if [ ! -z "$quiet" ]; then
+    redirect=" >/dev/null"
+fi
+command="elman $optThreads -class 1 -train $iobFile.train -rnnlm \"$model\" -valid $iobFile.valid $redirect"
 eval "$command"
 
 # cleaning up

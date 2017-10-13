@@ -4,6 +4,8 @@
 
 progName=$(basename "$BASH_SOURCE")
 elmanModel=""
+quiet=""
+
 
 function usage {
   echo
@@ -15,6 +17,7 @@ function usage {
   echo "  Options:"
   echo "    -h this help"
   echo "    -e <Elman LM file> use LM features"
+  echo "    -q quiet mode: do not print stderr output from Wapiti"
   echo
 }
 
@@ -22,11 +25,12 @@ function usage {
 
 
 OPTIND=1
-while getopts 'he:' option ; do 
+while getopts 'he:q' option ; do 
     case $option in
 	"h" ) usage
  	      exit 0;;
 	"e") elmanModel="$OPTARG";;
+	"q") quiet="yes";;
  	"?" ) 
 	    echo "Error, unknow option." 1>&2
             printHelp=1;;
@@ -64,14 +68,23 @@ if [ ! -z "$elmanModel" ]; then
     options="$options -e $elmanModel"
 fi
 
+
+redirect=""
+if [ ! -z "$quiet" ]; then
+    redirect="2>/dev/null"
+fi
+
+
 # training model
 rm -rf "$modelDir"
 mkdir "$modelDir"
-command="elephant-train $options -m \"$modelDir\" -w \"$patternFile\"  -i \"$iobFile\""
+command="elephant-train $options -m \"$modelDir\" -w \"$patternFile\"  -i \"$iobFile\" $redirect"
 eval "$command"
 if [ ! -z "$elmanModel" ]; then
     if [ ! -f "$modelDir/elman" ] && [ -f "$modelDir/$(basename "$elmanModel")" ]; then
-	echo "(fixing Elman model filename)"
+	if [ -z "$quiet" ]; then
+	    echo "(fixing Elman model filename)"
+	fi
 	mv "$modelDir/$(basename "$elmanModel")" "$modelDir/elman"
     fi
     if [ ! -f "$modelDir/elman" ]; then
