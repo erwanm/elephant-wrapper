@@ -14,9 +14,11 @@ testing="yep"
 elman=""
 force=""
 iso639mapping=""
-elephantModelDirName="elephant.model"
+paramsModelName="elephant"
 splitDevFile=""
 missingBScript="yep"
+
+
 
 function usage {
   echo
@@ -45,8 +47,9 @@ function usage {
   echo "       <output directory>; by default existing models are not recomputed."
   echo "    -l generate language codes mapping file; this assumes that the input .conllu"
   echo "       filenames start with the ISO639 language codes (intended for UD2 corpus)."
-  echo "    -n <elephant model name> name to use for the elephant model directory."
-  echo "       Default: '$elephantModelDirName'."
+  echo "    -n <parameters model name> name to use for the parameters model directory;"
+  echo "       this is useful when runnning this script several times with different"
+  echo "       parameters. Default: '$paramsModelName'."
   echo "    -s <training set proportion> Split test file into training and test set if "
   echo "       no training file is found (this is a workaround for the two languages in"
   echo "       UD2 for which only a dev file is supplied: UD_Kazakh and UD_Uyghur)."
@@ -71,7 +74,7 @@ while getopts 'htp:P:efln:s:b' option ; do
 	"e" ) elman="yep";;
 	"f" ) force="yep";;
 	"l" ) iso639mapping="yep";;
-	"n" ) elephantModelDirName="$OPTARG";;
+	"n" ) paramsModelName="$OPTARG";;
 	"s" ) splitDevFile="$OPTARG";;
 	"b" ) missingBScript="";;
  	"?" ) 
@@ -101,6 +104,7 @@ fi
 for dataDir in "$inputDir"/*; do
     if [ -d "$dataDir" ]; then
 	cleanupFiles=""
+	testingThis="$testing"
 	data=$(basename "$dataDir")
 	echo "### Processing '$data'..." 1>&2
 	lsPatTrain="$dataDir/$trainFilePattern"
@@ -117,57 +121,62 @@ for dataDir in "$inputDir"/*; do
 		# from here we have a train set or a test + split option (or both)
 		if [ -z "$trainFile" ]; then # no train set: we split the test set
 		    echo "Warning: no file matches '$lsPatTrain' in '$data'; splitting test file '$testFile'." 1>&2
-		    prefix=$(mktemp --tmpdir "$progName.split-dev-file.XXXXXXXXXX")
-		    split-conllu-sentences.pl -b "$prefix." -p "$splitDevFile" "$testFile"
-		    trainFile="$prefix.1"
-		    testFile="$prefix.2"
-		    cleanupFiles="$cleanupFiles $prefix.1 $prefix.2"
+		    prefixSplit=$(mktemp --tmpdir "$progName.split-dev-file.XXXXXXXXXX")
+		    split-conllu-sentences.pl -b "$prefixSplit." -p "$splitDevFile" "$testFile"
+		    trainFile="$prefixSplit.1"
+		    testFile="$prefixSplit.2"
+		    cleanupFiles="$cleanupFiles $prefixSplit.1 $prefixSplit.2"
 		fi
 		# now we have a train set, but it's still possible we don't have a test set; we're doing the training anyway
 
 		# TRAINING
 		workDir="$outputDir/$data"
+		prefix="$workDir/$paramsModelName"
 		opts=""
 		[ -d "$workDir" ] || mkdir "$workDir"
-		processWithElman=""
-		if [ ! -z "$elman" ] &&  [ ! -s "$workDir/elman.model" ]; then # Training Elman LM
-		    train-lm-from-UD-corpus.sh "$trainFile" "$workDir/elman.model"
+		processWithElman="" # by default wapiti model without Elman
+		if [ ! -z "$elman" ]; then
+		    if [ ! -s "$workDir/elman.model" ]; then # Training Elman LM
+			train-lm-from-UD-corpus.sh "$trainFile" "$workDir/elman.model"
+		    fi
 		    opts="$opts -e \"$workDir/elman.model\""
-		    if [ ! -s "$workDir/$elephantModelDirName/elman" ]; then
+		    if [ ! -s "$prefix.elephant-model/elman" ]; then # require Elman in wapiti model
 			processWithElman="yep"
 		    fi
 		fi
-		if [ ! -z "$processWithElman" ] || [ ! -s "$workDir/$elephantModelDirName/wapiti" ]; then # Training main Wapiti model
-		    command="train-tokenizer-from-UD-corpus.sh $opts \"$trainFile\" \"$patternFile\" \"$workDir/$elephantModelDirName\""
+		if [ ! -z "$processWithElman" ] || [ ! -s "$prefix.elephant-model/wapiti" ]; then # Training main Wapiti model
+		    command="train-tokenizer-from-UD-corpus.sh $opts \"$trainFile\" \"$patternFile\" \"$prefix.elephant-model\""
 		    eval "$command"
-		    if [ ! -s "$workDir/$elephantModelDirName/wapiti" ]; then
+		    if [ ! -s "$prefix.elephant-model/wapiti" ]; then
 			echo "An error occured during training. Command was: '$command'" 1>&2
 			echo "Skipping dataset '$data'" 1>&2
-			testing="" # skip testing
+			testingThis="" # skip testing
 		    fi
 		fi
 
 		# TESTING
-		if [ ! -z "$testing" ]; then
+		if [ ! -z "$testingThis" ]; then
 		    if [ -z "$testFile" ]; then
 			echo "Warning: no file matches '$lsPatTest' for '$data', skipping testing." 1>&2
 		    else
 			# get IOB gold output
 			untokenize.pl -i -f UD -C 1 -B T "$testFile" >"$workDir/gold.iob"
+			cleanupFiles="$cleanupFiles $workDir/gold.iob"
 			opts=""
 			if [ -z "$missingBScript" ]; then
 			    opts="-n"
 			fi
 			# remark: evaluation is also done by tokenize.sh
-			command="tokenize.sh $opts -c -I -i \"$testFile\" -o \"$workDir/test.iob\"  \"$workDir/$elephantModelDirName\""
+			command="tokenize.sh $opts -c -I -i \"$testFile\" -o \"$prefix\"  \"$prefix.elephant-model\""
 			eval "$command"
+			cleanupFiles="$cleanupFiles $prefix"
 
 			# the following 3 steps are for baseline tokenizer only:
 			# 1. get text file from test UD conllu file
 			untokenize.pl -f UD -C 1 -B T "$testFile" >"$workDir/baseline.txt"
 			# 2. tokenize it with baseline tokenizer
 			generic-tokenizer.pl -B T -i "$workDir/baseline.txt" >"$workDir/baseline.iob"
-			rm -f "$workDir/baseline.txt"
+			cleanupFiles="$cleanupFiles $workDir/baseline.iob $workDir/baseline.txt"
 			# 3. evaluate baseline
 			evaluate.pl "$workDir/baseline.iob:2" "$workDir/gold.iob:2" >"$workDir/baseline.eval"
 		    fi
