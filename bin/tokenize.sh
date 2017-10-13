@@ -20,7 +20,7 @@ ud2Format=""
 iobOpt=""
 missingBScript=1
 paramsModelName="elephant"
-
+quietOpt=""
 
 function usage {
   echo
@@ -54,6 +54,7 @@ function usage {
   echo "       as full names. The argument is not used."
   echo "    -P print the list of available models in the default model directory,"
   echo "       as ISO 639-1 (or ISO 639-2) codes. The argument is not used."
+  echo "    -q quiet mode."
   echo
 }
 
@@ -61,7 +62,7 @@ function usage {
 
 
 OPTIND=1
-while getopts 'hi:o:cIn:bpP' option ; do 
+while getopts 'hi:o:cIn:bpPq' option ; do 
     case $option in
 	"h" ) usage
  	      exit 0;;
@@ -75,6 +76,7 @@ while getopts 'hi:o:cIn:bpP' option ; do
 	      exit 0;;
 	"P" ) if [ ! -f "$defaultModelDir/$iso639File" ]; then echo "Error: cannot find file $defaultModelDir/$iso639File" 1>&2; exit 1; fi; cat "$defaultModelDir/$iso639File"
 	      exit 0;;
+	"q" ) quietOpt="-q";;
  	"?" ) 
 	    echo "Error, unknow option." 1>&2
             printHelp=1;;
@@ -140,7 +142,8 @@ if [ ! -z "$iobOpt" ]; then
 
     if [ ! -z "$missingBScript" ]; then # apply missing Bs script
 	tmp=$(mktemp --tmpdir "$progName.iob.XXXXXXXXX")
-	iob-fix-missing-b.pl -B T "$output" "$tmp"
+	command="iob-fix-missing-b.pl $quietOpt -B T \"$output\" \"$tmp\""
+	eval "$command"
 	cat "$tmp" >"$output"
 	rm -f "$tmp"
     fi

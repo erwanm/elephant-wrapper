@@ -106,7 +106,7 @@ for dataDir in "$inputDir"/*; do
 	cleanupFiles=""
 	testingThis="$testing"
 	data=$(basename "$dataDir")
-	echo "### Processing '$data'..." 1>&2
+	echo -n "* Processing '$data': " 1>&2
 	lsPatTrain="$dataDir/$trainFilePattern"
 	trainFile=$(ls $lsPatTrain 2>/dev/null | head -n 1)
 	lsPatTest="$dataDir/$testFilePattern"
@@ -137,6 +137,7 @@ for dataDir in "$inputDir"/*; do
 		processWithElman="" # by default wapiti model without Elman
 		if [ ! -z "$elman" ]; then
 		    if [ ! -s "$workDir/elman.model" ]; then # Training Elman LM
+			echo -n "training LM; " 1>&2
 			train-lm-from-UD-corpus.sh -q "$trainFile" "$workDir/elman.model"
 		    fi
 		    opts="$opts -e \"$workDir/elman.model\""
@@ -145,6 +146,7 @@ for dataDir in "$inputDir"/*; do
 		    fi
 		fi
 		if [ ! -z "$processWithElman" ] || [ ! -s "$prefix.elephant-model/wapiti" ]; then # Training main Wapiti model
+		    echo -n "training CRF model; " 1>&2
 		    command="train-tokenizer-from-UD-corpus.sh $opts \"$trainFile\" \"$patternFile\" \"$prefix.elephant-model\""
 		    eval "$command"
 		    if [ ! -s "$prefix.elephant-model/wapiti" ]; then
@@ -159,18 +161,20 @@ for dataDir in "$inputDir"/*; do
 		    if [ -z "$testFile" ]; then
 			echo "Warning: no file matches '$lsPatTest' for '$data', skipping testing." 1>&2
 		    else
+			echo -n "testing; " 1>&2
 			# get IOB gold output
 			untokenize.pl -i -f UD -C 1 -B T "$testFile" >"$workDir/gold.iob"
 			cleanupFiles="$cleanupFiles $workDir/gold.iob"
 			opts=""
 			if [ -z "$missingBScript" ]; then
-			    opts="-n"
+			    opts="-b"
 			fi
 			# remark: evaluation is also done by tokenize.sh
-			command="tokenize.sh $opts -c -I -i \"$testFile\" -o \"$prefix\"  \"$prefix.elephant-model\""
+			command="tokenize.sh $opts -q -c -I -i \"$testFile\" -o \"$prefix\"  \"$prefix.elephant-model\""
 			eval "$command"
 			cleanupFiles="$cleanupFiles $prefix"
 
+			echo -n "baseline; " 1>&2
 			# the following 3 steps are for baseline tokenizer only:
 			# 1. get text file from test UD conllu file
 			untokenize.pl -f UD -C 1 -B T "$testFile" >"$workDir/baseline.txt"
@@ -186,6 +190,7 @@ for dataDir in "$inputDir"/*; do
 	if [ ! -z "$cleanupFiles" ]; then
 	    rm -f $cleanupFiles
 	fi
+	echo 1>&2
     fi
 done
 if [ ! -z "$iso639mapping" ]; then

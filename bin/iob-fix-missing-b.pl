@@ -35,6 +35,7 @@ sub usage {
 	print $fh "    -B <B label> to use if label is not B.\n";
 	print $fh "    -I <I label> to use if label is not I.\n";
 	print $fh "    -O <O label> to use if label is not O.\n";
+	print $fh "    -q quiet mode.\n";
  	print $fh "\n";
 }
 
@@ -43,7 +44,7 @@ sub usage {
 
 # PARSING OPTIONS
 my %opt;
-getopts('hB:I:O:c:s', \%opt ) or  ( print STDERR "Error in options" &&  usage(*STDERR) && exit 1);
+getopts('hB:I:O:c:sq', \%opt ) or  ( print STDERR "Error in options" &&  usage(*STDERR) && exit 1);
 usage(*STDOUT) && exit 0 if $opt{h};
 print STDERR "2 arguments expected, but ".scalar(@ARGV)." found: ".join(" ; ", @ARGV)  && usage(*STDERR) && exit 1 if (scalar(@ARGV) != 2);
 
@@ -58,6 +59,7 @@ $iobCol=$opt{c} if (defined($opt{c}));
 $iobCol--;
 
 my $singleColOutput = defined($opt{s});
+my $quiet = defined($opt{q});
 
 my $nb=0;
 my $lineNo=1;
@@ -93,5 +95,5 @@ while (<F>) {
 close(F);
 close(OUT);
 $lineNo--;
-print STDERR "Info: read $lineNo lines, replaced $nb I labels with B labels.\n";
+print STDERR "Info: read $lineNo lines, replaced $nb I labels with B labels.\n" if (!$quiet);
 
