@@ -9,131 +9,71 @@ This is a work in progress. There should be a few additional scripts and documen
 
 # Installation
 
-By default the executables are copied in the local `bin` directory, but this can be changed this by assigning another path to `PREFIX`.
+## Obtaining this repository together with its dependencies
+
+This git repository includes [submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules). This is why it is recommended to clone it with:
+
+~~~~
+git clone --recursive git@github.com:erwanm/elephant-wrapper.git
+~~~~
+
+Alternatively, the dependencies can be downloaded separately. In this case the executables should be accessible in the `PATH` environment variable.
+
+## Compiling third-party components
+
+Recommended way to compile and setup the environment:
 
 ~~~~
 make
 make install
-~~~~
-
-Recommended:
-
-~~~~
 export PATH=$PATH:$(pwd)/bin
 ~~~~
-# Usage
 
-Most scripts in the `bin` directory display a usage message visible when executing with option `-h` (or with no argument at all, that works too). Below is the output of the main scripts:
+By default the executables are copied in the local `bin` directory,
+but this can be changed this by assigning another path to `PREFIX`,
+e.g. `make install PREFIX=/usr/local/bin/`.
 
-## train-lm-from-UD-corpus.sh
 
-Use if you want to include features from the RNN language model with the tokenizer.
 
-~~~~
-Usage: train-lm-from-UD-corpus.sh [options] <UD conllu file> <output lm file>
+## Usage
 
-  Options:
-    -h this help
-    -p <percentage training set> The rest is used as validation set;
-       Default: 80.
-    -t <nb threads>
-~~~~
+### Applying a tokenizer
 
-## bin/train-tokenizer-from-UD-corpus.sh
-
-Main script for training the CRF model. You can pick a pattern file from the directory `patterns` (remark: future versions will include the options described in the original authors paper).
+Example:
 
 ~~~~
-Usage: train-tokenizer-from-UD-corpus.sh [options] <UD conllu file> <pattern file> <output model directory>
-
-  Remark: <pattern file> should not contain the Elman features, they will be added
-  automatically if option -e is provided.
-
-  Options:
-    -h this help
-    -e <Elman LM file> use LM features
+tokenize.sh en <my-english-text.txt
 ~~~~
 
-## bin/apply-tokenizer-to-UD-corpus.sh
+To print a list of available language codes:
 
 ~~~~
-Usage: apply-tokenizer-to-UD-corpus.sh [options] <UD conllu file> <elephant model directory> <output file>
-
-  Options:
-    -h this help
-    -i output in IOB format and perform evaluation to <output file>.eval
+tokenize.sh -P
 ~~~~
+
+Various options are available, see:
+
+~~~~
+tokenize.sh -h
+~~~~
+
+
+
+
+### Training a tokenizer
+
+Unfortunately this part of the documentation is not done yet!
+Nevertheless, most scripts in the `bin` directory display a usage
+message when executed with option `-h`. This should get you started
 
 # License
 
+Please see file LICENSE.txt in this repository for details.
 
-## Elephant, Wapiti
-
-[Elephant](http://gmb.let.rug.nl/elephant) and [Wapiti](https://wapiti.limsi.fr/) are both published under the [BSD 2 Clauses license](https://opensource.org/licenses/BSD-2-Clause): 
-
-Copyright (c) 2009-2013  CNRS
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-- Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-- Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
-
-## Tomas Mikolov's Recurrent Neural Networks Language Modeling Toolkit
-
-Copyright (c) 2010-2012 Tomas Mikolov
-Copyright (c) 2013 Cantab Research Ltd
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
-- Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-
-- Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions and the following disclaimer in the
-documentation and/or other materials provided with the distribution.
-
-- Neither name of copyright holders nor the names of its contributors
-may be used to endorse or promote products derived from this software
-without specific prior written permission.
+- [Elephant](http://gmb.let.rug.nl/elephant) and [Wapiti](https://wapiti.limsi.fr/) are both published under the [BSD 2 Clauses license](https://opensource.org/licenses/BSD-2-Clause).
+- [Tomas Mikolov's Recurrent Neural Networks Language Modeling Toolkit](https://github.com/mspandit/rnnlm) is published under the [BSD 3 Clauses license](https://opensource.org/licenses/BSD-3-Clause).
+- elephant-wrapper (this repository) is published under the GPLv3 license.
 
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS"" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR
-CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
-## elephant-wrapper (this software)
-
-(c) Trinity College Dublin, Adapt Centre and Erwan Moreau
-
-License not decided yet, but it will definitely allow distribution and modification.
 
 
