@@ -1,9 +1,12 @@
 [submodule "third-party/elephant"]
 	path = third-party/elephant
 	url = git@github.com:ParallelMeaningBank/elephant.git
+	ignore = untracked
 [submodule "third-party/Wapiti"]
 	path = third-party/Wapiti
 	url = git@github.com:Jekub/Wapiti.git
+	ignore = untracked
 [submodule "third-party/rnnlm"]
 	path = third-party/rnnlm
 	url = git@github.com:mspandit/rnnlm.git
+	ignore = untracked

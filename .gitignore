@@ -1,7 +1,5 @@
 *.pyc
 *.o
-third-party/Wapiti/wapiti
-third-party/rnnlm/rnnlm
 bin/wapiti
 bin/elman
 bin/elephant
