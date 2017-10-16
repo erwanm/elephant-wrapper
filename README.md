@@ -1,5 +1,7 @@
 
-Elephant Wrapper version 0.1
+**Elephant Wrapper version 0.1**
+
+*This software and documentation are work in progress.*
 
 # Overview
 
@@ -7,7 +9,7 @@ This software is a wrapper for the [Elephant tokenizer](http://gmb.let.rug.nl/el
 
 This version aims at improving the usability of the original system. In particular, scripts are provided to facilitate the task of training a new model. Among other things, we provide a script for converting files in .conllu format from the [Universal Dependencies 2.0](http://universaldependencies.org/) corpora to the IOB format (required for training a tokenizer). We also provide the models trained from the Universal Dependencies 2.0 datasets; this means that this software include tokenizers for 50 languages (see usage below).
 
-This is a work in progress.
+
 
 # Installation
 
