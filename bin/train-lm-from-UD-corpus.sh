@@ -51,9 +51,11 @@ fi
 input="$1"
 model="$2"
 
+cleanupFiles=""
 
 # extract unicode chars + IOB labels from UD file
 iobFile=$(mktemp --tmpdir "$progName.XXXXXXXXX")
+cleanupFiles="$cleanupFiles $iobFile"
 untokenize.pl -i -f UD -C 1 $input  >$iobFile
 
 # split training/validation set
@@ -65,15 +67,23 @@ if [ -z "$quiet" ]; then
 fi
 head -n $sizeTrain $iobFile | cut -f 1 | tr '\n' ' ' > $iobFile.train
 tail -n $sizeValid $iobFile | cut -f 1 | tr '\n' ' ' > $iobFile.valid
+cleanupFiles="$cleanupFiles $iobFile.train $iobFile.valid"
 
 # training model
 rm -f "$modelFile"
 redirect=""
 if [ ! -z "$quiet" ]; then
-    redirect=" >/dev/null"
+    elmanStderr=$(mktemp --tmpdir "$progName.elman-stderr.XXXXXXXXX")
+    cleanupFiles="$cleanupFiles $elmanStderr"
+    redirect=" >/dev/null 2>$elmanStderr"
 fi
 command="elman $optThreads -class 1 -train $iobFile.train -rnnlm \"$model\" -valid $iobFile.valid $redirect"
 eval "$command"
+if [ ! -z "$quiet" ]; then
+    # elman prints the line "rnnlm file: xxxx" to STDERR, so we need to get rid
+    # of it in order to check that there's nothing else in STDERR, i.e. actual error
+    cat "$elmanStderr" | grep -v "^rnnlm file:" 1>&2
+fi
 
 # cleaning up
-rm -f $iobFile $iobFile.train $iobFile.valid
+rm -f $cleanupFiles
