@@ -2,10 +2,12 @@
 This software includes the following third party open source software
 components; each of these software components have their own license.
 
-- "Tomas Mikolov's Recurrent Neural Networks Language Modeling
-  Toolkit": Copyright (c) 2010-2012 Tomas Mikolov Copyright (c) 2013
-  Cantab Research Ltd All rights reserved; published under the BSD
-  3-clauses license. See third-party/rnnlm/COPYRIGHT.txt.
+- Grzegorz Chrupala's 'Elman' (https://bitbucket.org/gchrupala/elman)
+  is (c) Grzegorz Chrupala (no licensing information found). 'Elman'
+  is a variant of 'Tomas Mikolov's Recurrent Neural Networks Language
+  Modeling Toolkit': Copyright (c) 2010-2012 Tomas Mikolov Copyright
+  (c) 2013 Cantab Research Ltd All rights reserved; published under
+  the BSD 3-clauses license.
 
 - Wapiti: Copyright (c) 2009-2013 CNRS; All rights reserved; published
   under the BSD 2-clauses license. See third-party/Wapiti/COPYING.
