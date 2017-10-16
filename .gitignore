@@ -5,4 +5,5 @@ bin/elman
 bin/elephant
 bin/elephantc
 bin/elephant-train
+third-party/elman/elman
 *~
