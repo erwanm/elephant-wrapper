@@ -1,8 +1,8 @@
 version: 10
 file format: 0
 
-training data file: /tmp/train-lm-from-UD-corpus.sh.DNFBfZIdB.train
-validation data file: /tmp/train-lm-from-UD-corpus.sh.DNFBfZIdB.valid
+training data file: /tmp/train-lm-from-UD-corpus.sh.peC3Omf9G.train
+validation data file: /tmp/train-lm-from-UD-corpus.sh.peC3Omf9G.valid
 
 last probability of validation data: -48209.647813
 number of finished iterations: 12
