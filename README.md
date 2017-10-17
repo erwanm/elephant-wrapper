@@ -1,5 +1,5 @@
 
-**Elephant Wrapper version 0.1**
+**Elephant Wrapper version 0.1.1**
 
 *This software and documentation are work in progress.*
 
