@@ -43,19 +43,23 @@ e.g. `make install PREFIX=/usr/local/bin/`.
 
 ### Applying a tokenizer
 
-Example:
+#### Examples
 
 ~~~~
-tokenize.sh en <my-english-text.txt
+echo "Hello my old friend, why you didn't call?" | tokenize.sh en
 ~~~~
 
-To print a list of available language codes:
+~~~~
+tokenize.sh fr <my-french-text.txt
+~~~~
+
+#### Print a list of available language codes
 
 ~~~~
 tokenize.sh -P
 ~~~~
 
-Various options are available, see:
+#### Other options
 
 ~~~~
 tokenize.sh -h
@@ -66,9 +70,28 @@ tokenize.sh -h
 
 ### Training a tokenizer
 
-Unfortunately this part of the documentation is not done yet!
-Nevertheless, most scripts in the `bin` directory display a usage
-message when executed with option `-h`, this should get you started.
+#### Train an Elman language model and then train a Wapiti model
+
+With `corpus.conllu` the input data (`conllu` format as in Universal Dependencies 2 data):
+
+~~~~
+train-lm-from-UD-corpus.sh corpus.conllu elman.lm
+train-tokenizer-from-UD-corpus.sh -e corpus.conllu patterns/code7.txt my-output-dir
+~~~~
+
+#### Training a tokenizer for each of the 70 datasets in UD 2
+
+With directory `ud-treebanks-v2.0` containing the 70 datasets in the Universal Dependencies 2 data:
+
+~~~~
+train-multiple-tokenizers.sh -e -l -s 0.8 ud-treebanks-v2.0 patterns/code7.txt my-output-dir
+~~~~
+
+You can also replicate this experiment using the script `bin/experiments/01-train-full-UD2.sh`, which takes care of downloading and extracting the UD2 data for you.
+
+#### Other options
+
+For more details, most scripts in the `bin` directory display a usage message when executed with option `-h`.
 
 # License
 
