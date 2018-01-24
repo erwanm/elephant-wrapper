@@ -23,6 +23,9 @@ sub usage {
 	print $fh "\n"; 
 	print $fh "Usage: $progname [options] <iob predicted file>[:col]  <iob gold file>[:col]\n";
 	print $fh "\n";
+	print $fh "  Evaluates tokenization, prints:\n";
+	print $fh "    <total chars> <nb errors> <error rate> <accuracy>\n";
+	print $fh "\n";
  	print $fh "  Options:\n";
 	print $fh "    -h print this help message.\n";
 	print $fh "    -c <default IOB column> default: $iobCol.\n";
@@ -76,5 +79,5 @@ for (my $i=0; $i<scalar(@$answersPred); $i++) {
     }
 }
 
-printf("%d\t%d\t%.8f\n", scalar(@$answersPred), $nbErr, $nbErr/scalar(@$answersPred));
+printf("%d\t%d\t%.8f\t%.8f\n", scalar(@$answersPred), $nbErr, $nbErr/scalar(@$answersPred), 1-$nbErr/scalar(@$answersPred));
 

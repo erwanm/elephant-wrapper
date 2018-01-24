@@ -5,6 +5,7 @@
 progName=$(basename "$BASH_SOURCE")
 elmanModel=""
 quiet=""
+iobInput=""
 
 
 function usage {
@@ -15,9 +16,11 @@ function usage {
   echo "  automatically if option -e is provided."
   echo
   echo "  Options:"
-  echo "    -h this help"
-  echo "    -e <Elman LM file> use LM features"
-  echo "    -q quiet mode: do not print stderr output from Wapiti"
+  echo "    -h this help."
+  echo "    -e <Elman LM file> use LM features."
+  echo "    -i provide the IOB file directly instead of the UD conllu file. The IOB file"
+  echo "       is normally generated with: 'untokenize.pl -B T -i -f UD -C 1 <input>'."
+  echo "    -q quiet mode: do not print stderr output from Wapiti."
   echo
 }
 
@@ -25,11 +28,12 @@ function usage {
 
 
 OPTIND=1
-while getopts 'he:q' option ; do 
+while getopts 'he:iq' option ; do 
     case $option in
 	"h" ) usage
  	      exit 0;;
 	"e") elmanModel="$OPTARG";;
+	"i") iobInput="yep";;
 	"q") quiet="yes";;
  	"?" ) 
 	    echo "Error, unknow option." 1>&2
@@ -52,10 +56,14 @@ modelDir="$3"
 
 options=""
 
-# extract unicode chars + IOB labels from UD file
-iobFile=$(mktemp --tmpdir "$progName.iob.XXXXXXXXX")
-untokenize.pl -B T -i -f UD -C 1 "$input" >$iobFile
-#echo $iobFile
+if [ -z "$iobInput" ]; then
+    # extract unicode chars + IOB labels from UD file
+    iobFile=$(mktemp --tmpdir "$progName.iob.XXXXXXXXX")
+    untokenize.pl -B T -i -f UD -C 1 "$input" >$iobFile
+    #echo $iobFile
+else
+    iobFile="$input"
+fi
 
 patternFile=$(mktemp --tmpdir "$progName.pat.XXXXXXXXX")
 cat "$pattern" >"$patternFile"
@@ -93,4 +101,7 @@ if [ ! -z "$elmanModel" ]; then
 fi
 
 # cleaning up
-rm -f $iobFile $patternFile
+if [ -z "$iobInput" ]; then
+    rm -f "$iobFile"
+fi
+rm -f "$patternFile"

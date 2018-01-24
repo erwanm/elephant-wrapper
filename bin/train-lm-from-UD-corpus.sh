@@ -18,7 +18,7 @@ function usage {
   echo "    -p <percentage training set> The rest is used as validation set;"
   echo "       Default: $percentTrain."
   echo "    -t <nb threads>"
-  echo "    -q quite mode: don't print progress to STDOUT"
+  echo "    -q quiet mode: don't print progress to STDOUT"
   echo
 }
 
