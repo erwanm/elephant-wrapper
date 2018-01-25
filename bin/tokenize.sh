@@ -21,6 +21,7 @@ iobOpt=""
 missingBScript=1
 paramsModelName="elephant"
 quietOpt=""
+iobInputFormat=""
 
 function usage {
   echo
@@ -42,8 +43,9 @@ function usage {
   echo "    -i <input> read from this file instead of STDIN."
   echo "    -o <output> write to this file instead of STDOUT."
   echo "    -c input is in the UD2 .conllu file format"
-  echo "    -I output provided in IOB format; if used in conjunction with -c, the"
-  echo "       evaluation is also performed and the result is either printed to"
+  echo "    -t input is in the IOB format."
+  echo "    -I output provided in IOB format; if used in conjunction with -t or -c,"
+  echo "       the evaluation is also performed and the result is either printed to"
   echo "       STDERR or written to <output>.eval if option -o is supplied."
   echo "    -n <parameters model name> name to use for the parameters model directory,"
   echo "       in case there are several alternatives. Default: '$paramsModelName'."
@@ -62,13 +64,14 @@ function usage {
 
 
 OPTIND=1
-while getopts 'hi:o:cIn:bpPq' option ; do 
+while getopts 'hi:o:cIn:bpPqt' option ; do 
     case $option in
 	"h" ) usage
  	      exit 0;;
 	"i" ) input="$OPTARG";;
 	"o" ) output="$OPTARG";;
 	"c" ) ud2Format=1;;
+	"t" ) iobInputFormat=1;;
  	"I" ) iobOpt="-f iob";;
 	"n" ) paramsModelName="$OPTARG";;
 	"b" ) missingBScript="";;
@@ -119,7 +122,13 @@ if [ ! -z "$ud2Format" ]; then
     # convert UD corpus to text, but remove line breaks
     untokenize.pl -f UD -C 1 "$input" | tr '\n' ' ' >$textFile
 else
-    tr '\n' ' ' <"$input" >$textFile
+    if [ ! -z "$iobInputFormat" ]; then
+	# the problem is that elephant does not allow an option for providing the text in IOB format directly,
+	# so we must convert it to text first and it converts its back to IOB later.
+	cat "$input" | cut -f 1 | perl -e 'while (<STDIN>) { print chr($_); }' >$textFile
+    else
+	tr '\n' ' ' <"$input" >$textFile
+    fi
 fi
 
 redirectOutput=""
@@ -148,10 +157,19 @@ if [ ! -z "$iobOpt" ]; then
 	rm -f "$tmp"
     fi
 
-    # if not UD2 format, we're done; otherwise evaluation
-    if [ ! -z "$ud2Format" ]; then
+    if  [ ! -z "$rmOutput" ]; then  # no output file: print to STDOUT
+	cat "$output"
+    fi
+    
+    # if not UD2 or IOB input format, we're done; otherwise evaluation
+    if [ ! -z "$ud2Format" ] || [ ! -z "$iobInputFormat" ] ; then
+
 	# get IOB gold output
-	untokenize.pl -B T -i -f UD -C 1 "$input" >$textFile
+	if [ ! -z "$ud2Format" ]; then # input in UD2 format
+	    untokenize.pl -B T -i -f UD -C 1 "$input" >$textFile
+	else # input in IOB format
+	    textFile="$input"
+	fi
 
 	if [ -z "$rmOutput" ]; then 
 	    redirectOutput=" >\"$output.eval\""

@@ -41,8 +41,10 @@ sub usage {
 	print $fh "\n"; 
 	print $fh "Usage: $progname [options] <tokenized text>\n";
 	print $fh "\n";
-	print $fh "  Converts a tokenized text with space indications to the 'iob' format \n";
-	print $fh "  required by elephant.\n";
+	print $fh "  Converts a tokenized text which contains space indications (by \n";
+	print $fh "  default in UD .conllu format) either to the 'iob' format required\n";
+	print $fh "  by elephant (see option -i) or to raw text.\n";
+	print $fh "\n";
 	print $fh "  Remark: option '-f' is meant to change the format to a different\n";
 	print $fh "          standard format. If another option among '-c', '-s', '-v' is\n";
 	print $fh "          used as well, the default format is the one selected with '-f'.\n";

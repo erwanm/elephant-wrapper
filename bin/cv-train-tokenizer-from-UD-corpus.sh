@@ -13,6 +13,7 @@ stopCriterionMax=10
 outputModelDir=""
 evalCol=4 # col 4 for accuracy (see evaluate.pl)
 
+
 function usage {
   echo
   echo "Usage: $progName [options] <UD conllu file> <pattern list file> <perf output file>"
@@ -23,12 +24,17 @@ function usage {
   echo "  progress for the last $stopCriterionMax patterns; thus the order of the files"
   echo "   matters, the first are supposed to be the simplest patterns."
   echo
-  echo "  Remark: the pattern files should not contain the Elman features, they will be"
-  echo "  added automatically if option -e is provided."
+  echo "  Remark: the columns given for calculating features are as follows:"
+  echo "          <unicode point> <unicode category> [<elman1> <elman2> ...]"
+  echo "          i.e. columns 0 and 1 are mandatory, columns 2 to 11 are the optional"
+  echo "          Elman 'top10' features. If at least one pattern uses the Elman"
+  echo "          features, then option -e must be supplied."
   echo
   echo "  Options:"
   echo "    -h this help."
-  echo "    -e <Elman LM file> use LM features."
+  echo "    -e <Elman LM file> The Elman features will be used depending on whether"
+  echo "       the pattern file uses column 2; this implies that this option must be"
+  echo "       supplied if at least one pattern file uses column 2."
   echo "    -i provide the IOB file directly instead of the UD conllu file. The IOB file"
   echo "       is normally generated with: 'untokenize.pl -B T -i -f UD -C 1 <input>'."
   echo "    -c <nb fold>; default: $nbFold."
@@ -71,11 +77,13 @@ while getopts 'hc:e:iqks:t:' option ; do
     case $option in
 	"h" ) usage
  	      exit 0;;
-	"e" ) trainOpts="$trainOpts -e \"$OPTARG\"";;
+	"e" ) elmanModel="$OPTARG";;
 	"i" ) iobInput="yep"
+	      testOpts="$testOpts -t"
 	      trainOpts="$trainOpts -i";;
 	"c" ) nbFold="$OPTARG";;
 	"q" ) trainOpts="$trainOpts -q"
+	      testOpts="$testOpts -q"
 	      quiet="yes";;
 	"k" ) keepFiles="yep";;
 	"s" ) stopCriterionMax="$OPTARG";;
@@ -86,8 +94,8 @@ while getopts 'hc:e:iqks:t:' option ; do
     esac
 done
 shift $(($OPTIND - 1))
-if [ $# -ne 2 ]; then
-    echo "Error: expecting 2 args." 1>&2
+if [ $# -ne 3 ]; then
+    echo "Error: expecting 3 args." 1>&2
     printHelp=1
 fi
 
@@ -107,6 +115,7 @@ workDir=$(mktemp -d --tmpdir "$progName.pat.XXXXXXXXX")
 #
 #
 if [ -z "$iobInput" ]; then
+    testOpts="$testOpts -c"
     split-conllu-sentences.pl -b "$workDir/" -a ".test.cv" "$nbFold" "$input"
 else
     split -d -n "l/$nbFold" --additional-suffix=.test.cv "$input" "$workDir/"
@@ -137,15 +146,22 @@ while [ $patternNo -le $nbPatterns ] && [ -z "$stopCriterion" ]; do
     patternFile=$(head -n $patternNo "$patternFile" | tail -n 1)
     patternDir="$workDir/$(basename "$patternFile")"
     mkdir "$patternDir"
+    # Elman option is added only if the features in the pattern file require it
+    elmanOpt=""
+    if grep "%x\[.*,\s*2\s*\]" $patternFile >/dev/null; then # pattern file contains at least one features with column 2, interpreted as requiring Elman features
+	if [ -z "$elmanModel" ]; then
+	    echo "Warning: pattern '$patternFile' contains feature(s) using column 2, but no Elman model provided." 1>&2
+	else
+	    elmanOpt="-z \"$elmanModel\""
+	fi
+    fi
     sumStr="0"
     for testFile in "$workDir"/*.test.cv; do
 	trainFile="${testFile%.test.cv}.train.cv"
 	outputDir="$patternDir/$(basename "$testFile")"
-	comm="train-tokenizer-from-UD-corpus.sh $trainOpts \"$trainFile\" \"$patternFile\" \"$outputDir\""
+	comm="train-tokenizer-from-UD-corpus.sh $trainOpts $elmanOpt \"$trainFile\" \"$patternFile\" \"$outputDir\""
 	eval "$comm"
-
-	TODO pbm: file can be IOB format instead of conllu
-	comm="cat  \"$testFile\" | tokenize.sh -c -I -o \"$outputDir/test.out\" \"$patternDir\"" # need option -n ???
+	comm="cat  \"$testFile\" | tokenize.sh $testOpts -c -I -o \"$outputDir/test.out\" \"$patternDir\"" # need option -n ???
 	eval "$comm"
 	perf=$(cat "$outputDir/test.out.eval" | cut -f "$evalCol")
 	sumStr="$sumStr + $perf"

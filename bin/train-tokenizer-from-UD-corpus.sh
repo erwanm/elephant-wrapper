@@ -6,18 +6,17 @@ progName=$(basename "$BASH_SOURCE")
 elmanModel=""
 quiet=""
 iobInput=""
-
+addElmanFeatures=""
 
 function usage {
   echo
   echo "Usage: $progName [options] <UD conllu file> <pattern file> <output model directory>"
   echo
-  echo "  Remark: <pattern file> should not contain the Elman features, they will be added"
-  echo "  automatically if option -e is provided."
-  echo
   echo "  Options:"
   echo "    -h this help."
   echo "    -e <Elman LM file> use LM features."
+  echo "    -a add the 10 Elman features to the pattern file (use this only if the pattern"
+  echo "       does not already contain the Elman features); ignored if -e is not supplied."
   echo "    -i provide the IOB file directly instead of the UD conllu file. The IOB file"
   echo "       is normally generated with: 'untokenize.pl -B T -i -f UD -C 1 <input>'."
   echo "    -q quiet mode: do not print stderr output from Wapiti."
@@ -28,11 +27,12 @@ function usage {
 
 
 OPTIND=1
-while getopts 'he:iq' option ; do 
+while getopts 'he:iqa' option ; do 
     case $option in
 	"h" ) usage
  	      exit 0;;
 	"e") elmanModel="$OPTARG";;
+	"a") addElmanFeatures="yep";;
 	"i") iobInput="yep";;
 	"q") quiet="yes";;
  	"?" ) 
@@ -67,7 +67,7 @@ fi
 
 patternFile=$(mktemp --tmpdir "$progName.pat.XXXXXXXXX")
 cat "$pattern" >"$patternFile"
-if [ ! -z "$elmanModel" ]; then
+if [ ! -z "$elmanModel" ] && [ ! -z "$addElmanFeatures" ] ; then
     # add Elman features to pattern
     echo >>"$patternFile"
     for i in $(seq 1 10); do

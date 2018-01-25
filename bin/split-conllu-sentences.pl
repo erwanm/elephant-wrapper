@@ -106,7 +106,7 @@ my $outputPrefix = (defined($opt{b})) ? $opt{b} : $inputFile.".";
 my $outputSuffix = (defined($opt{a})) ? $opt{a} : "";
 
 my $proportion = defined($opt{p});
-die "Error: invalid proportion $N with option -p, N must be lower than 1" if ($N>1);
+die "Error: invalid proportion $N with option -p, N must be lower than 1" if ($proportion && ($N>1));
 my $verbose =  defined($opt{v});
 
 my @corpus;
