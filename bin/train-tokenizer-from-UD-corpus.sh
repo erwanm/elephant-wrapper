@@ -67,13 +67,15 @@ fi
 
 patternFile=$(mktemp --tmpdir "$progName.pat.XXXXXXXXX")
 cat "$pattern" >"$patternFile"
-if [ ! -z "$elmanModel" ] && [ ! -z "$addElmanFeatures" ] ; then
-    # add Elman features to pattern
-    echo >>"$patternFile"
-    for i in $(seq 1 10); do
-	echo "*100:%x[ 0,$i]" >>"$patternFile"
-    done
+if [ ! -z "$elmanModel" ]; then
     options="$options -e $elmanModel"
+     if [ ! -z "$addElmanFeatures" ] ; then
+	 # add Elman features to pattern
+	 echo >>"$patternFile"
+	 for i in $(seq 1 10); do
+	     echo "*100:%x[ 0,$i]" >>"$patternFile"
+	 done
+     fi
 fi
 
 
@@ -86,17 +88,29 @@ fi
 # training model
 rm -rf "$modelDir"
 mkdir "$modelDir"
-command="elephant-train $options -m \"$modelDir\" -w \"$patternFile\"  -i \"$iobFile\" $redirect"
+tmpTrainOutput=$(mktemp --tmpdir "$progName.elephant-train-output.XXXXXXXXX")
+command="elephant-train $options -m \"$modelDir\" -w \"$patternFile\"  -i \"$iobFile\" 2>$tmpTrainOutput"
 eval "$command"
-if [ ! -z "$elmanModel" ]; then
-    if [ ! -f "$modelDir/elman" ] && [ -f "$modelDir/$(basename "$elmanModel")" ]; then
-	if [ -z "$quiet" ]; then
-	    echo "(fixing Elman model filename)"
-	fi
-	mv "$modelDir/$(basename "$elmanModel")" "$modelDir/elman"
+if [ $? -ne 0 ] || grep error $tmpTrainOutput; then
+    cat "$tmpTrainOutput" 1>&2
+    rm -f "$tmpTrainOutput"
+    echo "Error: an error occured with command '$command', aborting." 1>&2
+    exit 3
+else
+    if [ -z "$quiet" ]; then
+	cat "$tmpTrainOutput" 1>&2
     fi
-    if [ ! -f "$modelDir/elman" ]; then
-	echo "Error: no Elman model in $modelDir, something went wrong" 1>&2
+    rm -f "$tmpTrainOutput"
+    if [ ! -z "$elmanModel" ]; then
+	if [ ! -f "$modelDir/elman" ] && [ -f "$modelDir/$(basename "$elmanModel")" ]; then
+	    if [ -z "$quiet" ]; then
+		echo "(fixing Elman model filename)"
+	    fi
+	    mv "$modelDir/$(basename "$elmanModel")" "$modelDir/elman"
+	fi
+	if [ ! -f "$modelDir/elman" ]; then
+	    echo "Error: no Elman model in $modelDir, something went wrong" 1>&2
+	fi
     fi
 fi
 
