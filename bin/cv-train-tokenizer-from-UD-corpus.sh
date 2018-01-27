@@ -62,7 +62,7 @@ function noProgressAnymore {
 	total=$(cat "$perfFile" | wc -l)
 	if [ $total -gt $maxNoProgress ]; then # otherwise dont stop, not enough cases yet
 	    # sort first cases (the ones before the last $maxNoProgress cases)
-	    best=$(cat "$perfFile" | sort -n -g +1 -2 | tail)
+	    best=$(cat "$perfFile" | sort -g +1 -2 | tail -n 1)
 	    bestNo=$(echo "$best" | cut -f 1) # relying on the pattern no for the order of the file (could also be done differently)
 	    if [ $bestNo -le $(( $total - $maxNoProgress )) ]; then
 		echo "$best"
@@ -186,7 +186,7 @@ while [ $patternNo -le $nbPatterns ] && [ -z "$stopCriterion" ]; do
 	    fi
 	fi
     done
-    echo "PERF $sumStr" 1>&2
+#    echo "PERF $sumStr" 1>&2
     meanperf=$(echo "scale=6; ( $sumStr ) / $nbFold" | bc) # calculate the mean perf
     echo -e "$patternNo\t$patternFile\t$meanperf" >>"$outputPerfFile"
     stopCriterion=$(noProgressAnymore "$outputPerfFile" "$stopCriterionMax")
@@ -197,9 +197,15 @@ if [ ! -z "$printProgress" ]; then
 fi
 
 if [ ! -z "$outputModelDir" ]; then # train on full training data for best pattern
-    bestPatternFile=$(echo "$stopCriterion" | cut -f 2)
+    bestPatternFile=$(cat "$outputPerfFile" | sort -g +1 -2 | tail -n 1 | cut -f 2)
+    echo "bestPatternFile=$bestPatternFile" 1>&2
     comm="train-tokenizer-from-UD-corpus.sh $trainOpts \"$input\" \"$bestPatternFile\" \"$outputModelDir\""
+    echo "$comm" 1>&2
     eval "$comm"
+    if [ $? -ne 0 ]; then
+	echo "An error occured when running '$comm'" 1>&2
+	exit 6
+    fi
 fi
 
 if [ -z "$keepFiles" ]; then
