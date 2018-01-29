@@ -62,7 +62,7 @@ function noProgressAnymore {
 	total=$(cat "$perfFile" | wc -l)
 	if [ $total -gt $maxNoProgress ]; then # otherwise dont stop, not enough cases yet
 	    # sort first cases (the ones before the last $maxNoProgress cases)
-	    best=$(cat "$perfFile" | sort -g +2 -3 | tail -n 1)
+	    best=$(cat "$perfFile" | sort  -k 3,3n -k 1,1rn | tail -n 1)
 	    bestNo=$(echo "$best" | cut -f 1) # relying on the pattern no for the order of the file (could also be done differently)
 	    if [ $bestNo -le $(( $total - $maxNoProgress )) ]; then
 		echo "$best"
@@ -197,7 +197,7 @@ if [ ! -z "$printProgress" ]; then
 fi
 
 if [ ! -z "$outputModelDir" ]; then # train on full training data for best pattern
-    bestPatternFile=$(cat "$outputPerfFile" | sort -g +1 -2 | tail -n 1 | cut -f 2)
+    bestPatternFile=$(cat "$outputPerfFile" | sort -k 3,3n -k 1,1rn | tail -n 1 | cut -f 2)
     #    echo "bestPatternFile=$bestPatternFile" 1>&2
     if grep "%x\[.*,\s*2\s*\]" $bestPatternFile >/dev/null; then # pattern file contains at least one features with column 2, interpreted as requiring Elman features
 	trainOpts="$trainOpts -e \"$elmanModel\""
