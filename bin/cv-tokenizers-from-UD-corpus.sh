@@ -9,7 +9,7 @@ elmanModel=""
 quiet=""
 iobInput=""
 keepFiles=""
-stopCriterionMax=10
+stopCriterionMax=15
 outputModelDir=""
 evalCol=4 # col 4 for accuracy (see evaluate.pl)
 printProgress=""
@@ -62,7 +62,7 @@ function noProgressAnymore {
 	total=$(cat "$perfFile" | wc -l)
 	if [ $total -gt $maxNoProgress ]; then # otherwise dont stop, not enough cases yet
 	    # sort first cases (the ones before the last $maxNoProgress cases)
-	    best=$(cat "$perfFile" | sort -g +1 -2 | tail -n 1)
+	    best=$(cat "$perfFile" | sort -g +2 -3 | tail -n 1)
 	    bestNo=$(echo "$best" | cut -f 1) # relying on the pattern no for the order of the file (could also be done differently)
 	    if [ $bestNo -le $(( $total - $maxNoProgress )) ]; then
 		echo "$best"
@@ -198,9 +198,9 @@ fi
 
 if [ ! -z "$outputModelDir" ]; then # train on full training data for best pattern
     bestPatternFile=$(cat "$outputPerfFile" | sort -g +1 -2 | tail -n 1 | cut -f 2)
-    echo "bestPatternFile=$bestPatternFile" 1>&2
+#    echo "bestPatternFile=$bestPatternFile" 1>&2
     comm="train-tokenizer-from-UD-corpus.sh $trainOpts \"$input\" \"$bestPatternFile\" \"$outputModelDir\""
-    echo "$comm" 1>&2
+#    echo "$comm" 1>&2
     eval "$comm"
     if [ $? -ne 0 ]; then
 	echo "An error occured when running '$comm'" 1>&2
