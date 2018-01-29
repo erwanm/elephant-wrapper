@@ -21,6 +21,7 @@ missingBScript="yep"
 generatePatternsString=""
 patternsFile=""
 maxNoProgress=""
+nbFold=5
 
 
 function usage {
@@ -45,11 +46,12 @@ function usage {
   echo "       test dataset."
   echo "    -g <parameters for generating patterns> parameter string which specifies"
   echo "       which patterns are generated; transmitted as option -s when calling"
-  echo "       script generate-patterns.sh; call this script with -h for more details."
+  echo "       script generate-patterns.pl; call this script with -h for more details."
   echo "    -i <list of patterns file> use this specific list of pattern files instead"
   echo "       of generating the list automatically."
   echo "    -m <max no progress> specify the max number of patterns with no progress for"
   echo "       stopping the process; 0 means process all files; default: $stopCriterionMax."
+  echo "    -k <K> value for k-fold cross-validation; default: $nbFold."
   echo "    -p <train file pattern> pattern to use for finding the train file;"
   echo "       default: '$trainFilePattern'"
   echo "    -P <test file pattern> pattern to use for finding the test file;"
@@ -76,7 +78,7 @@ function usage {
 
 
 OPTIND=1
-while getopts 'htg:i:m:p:P:efln:s:b' option ; do 
+while getopts 'htg:i:m:k:p:P:efln:s:b' option ; do 
     case $option in
 	"h" ) usage
  	      exit 0;;
@@ -84,6 +86,7 @@ while getopts 'htg:i:m:p:P:efln:s:b' option ; do
 	"g" ) generatePatternsString="$OPTARG";;
 	"i" ) patternsFile="$OPTARG";;
 	"m" ) maxNoProgress="$OPTARG";;
+	"k" ) nbFold="$OPTARG";;
 	"p" ) trainFilePattern="$OPTARG";;
 	"P" ) testFilePattern="$OPTARG";;
 	"e" ) elman="yep";;
@@ -117,7 +120,8 @@ fi
 
 if [ -z "$patternsFile" ]; then
     patternsFile="$outputDir/patterns.list"
-    [ -d "$outputDir/patterns" ] || mkdir "$outputDir/patterns"
+    rm -rf "$outputDir/patterns"
+    mkdir "$outputDir/patterns"
     opts=""
     if [ ! -z "$generatePatternsString" ]; then
 	opts="-s \"$generatePatternsString\""
@@ -164,7 +168,7 @@ for dataDir in "$inputDir"/*; do
 		prefix="$workDir/$paramsModelName"
 		opts="-q -t \"$prefix.elephant-model\""
 		if [ ! -z  "$maxNoProgress" ]; then
-		    opts="$opts -s \"$maxNoProgress\""
+		    opts="$opts -s \"$maxNoProgress\" -c $nbFold"
 		fi
 		[ -d "$workDir" ] || mkdir "$workDir"
 		processWithElman="" # by default wapiti model without Elman
@@ -174,12 +178,12 @@ for dataDir in "$inputDir"/*; do
 			train-lm-from-UD-corpus.sh -q "$trainFile" "$workDir/elman.model"
 		    fi
 		    opts="$opts -e \"$workDir/elman.model\""
-		    if [ ! -s "$prefix.elephant-model/elman" ]; then # require Elman in wapiti model
+		    if [ ! -s "$prefix.elephant-model/elman" ]; then # require Elman in wapiti model (for case where it was computed before without Elman)
 			processWithElman="yep"
 		    fi
 		fi
 		if [ ! -z "$processWithElman" ] || [ ! -s "$prefix.elephant-model/wapiti" ]; then # Training main Wapiti model
-		    echo "Cross-validation for finding best CRF model; " 1>&2
+		    echo "${nbFold}-fold CV for finding best CRF model; " 1>&2
 		    command="cv-tokenizers-from-UD-corpus.sh $opts  \"$trainFile\" \"$patternsFile\" \"$prefix.cv.perf\""
 		    eval "$command"
 		    if [ ! -s "$prefix.elephant-model/wapiti" ]; then

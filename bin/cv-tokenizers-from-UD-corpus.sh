@@ -198,7 +198,10 @@ fi
 
 if [ ! -z "$outputModelDir" ]; then # train on full training data for best pattern
     bestPatternFile=$(cat "$outputPerfFile" | sort -g +1 -2 | tail -n 1 | cut -f 2)
-#    echo "bestPatternFile=$bestPatternFile" 1>&2
+    #    echo "bestPatternFile=$bestPatternFile" 1>&2
+    if grep "%x\[.*,\s*2\s*\]" $bestPatternFile >/dev/null; then # pattern file contains at least one features with column 2, interpreted as requiring Elman features
+	trainOpts="$trainOpts -e \"$elmanModel\""
+    fi
     comm="train-tokenizer-from-UD-corpus.sh $trainOpts \"$input\" \"$bestPatternFile\" \"$outputModelDir\""
 #    echo "$comm" 1>&2
     eval "$comm"
