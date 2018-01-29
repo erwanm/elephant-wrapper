@@ -16,7 +16,7 @@ binmode(STDOUT, ":utf8");
 my $progname = "generate-patterns.pl";
 
 my $outputSuffix=".pat";
-my $ngramMaxSize=1;
+my $ngramMaxSize=3;
 my $windowMax=8;
 my $useUnicodePoint=2;
 my $useUnicodeCateg=2;
@@ -135,6 +135,7 @@ sub generate {
 	} 
 	
 	open(F, ">:encoding(utf-8)", $name) or die "Cannot write to '$name'";
+	print "$name\n";
 
 	# use bigram? (not sure how this works really, just copying from the Elephant templates)
 	print F "B\n" if ($useBigram); 
@@ -159,8 +160,6 @@ sub generate {
 	    }
 	}
 	print F "\n";
-
-	
 	close(F);
     }
 }
