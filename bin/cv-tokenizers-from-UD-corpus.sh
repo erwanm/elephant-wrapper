@@ -110,7 +110,7 @@ input="$1"
 patternsFile="$2"
 outputPerfFile="$3"
 
-workDir=$(mktemp -d --tmpdir "$progName.pat.XXXXXXXXX")
+workDir=$(mktemp -d --tmpdir "tmp.$progName.pat.XXXXXXXXX")
 
 #echo "$workDir" 1>&2
 

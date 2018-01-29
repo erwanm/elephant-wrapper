@@ -54,7 +54,7 @@ model="$2"
 cleanupFiles=""
 
 # extract unicode chars + IOB labels from UD file
-iobFile=$(mktemp --tmpdir "$progName.XXXXXXXXX")
+iobFile=$(mktemp --tmpdir "tmp.$progName.XXXXXXXXX")
 cleanupFiles="$cleanupFiles $iobFile"
 untokenize.pl -i -f UD -C 1 $input  >$iobFile
 
@@ -73,7 +73,7 @@ cleanupFiles="$cleanupFiles $iobFile.train $iobFile.valid"
 rm -f "$modelFile"
 redirect=""
 if [ ! -z "$quiet" ]; then
-    elmanStderr=$(mktemp --tmpdir "$progName.elman-stderr.XXXXXXXXX")
+    elmanStderr=$(mktemp --tmpdir "tmp.$progName.elman-stderr.XXXXXXXXX")
     cleanupFiles="$cleanupFiles $elmanStderr"
     redirect=" >/dev/null 2>$elmanStderr"
 fi

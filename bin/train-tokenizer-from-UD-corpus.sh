@@ -58,14 +58,14 @@ options=""
 
 if [ -z "$iobInput" ]; then
     # extract unicode chars + IOB labels from UD file
-    iobFile=$(mktemp --tmpdir "$progName.iob.XXXXXXXXX")
+    iobFile=$(mktemp --tmpdir "tmp.$progName.iob.XXXXXXXXX")
     untokenize.pl -B T -i -f UD -C 1 "$input" >$iobFile
     #echo $iobFile
 else
     iobFile="$input"
 fi
 
-patternFile=$(mktemp --tmpdir "$progName.pat.XXXXXXXXX")
+patternFile=$(mktemp --tmpdir "tmp.$progName.pat.XXXXXXXXX")
 cat "$pattern" >"$patternFile"
 if [ ! -z "$elmanModel" ]; then
     options="$options -e $elmanModel"
@@ -88,7 +88,7 @@ fi
 # training model
 rm -rf "$modelDir"
 mkdir "$modelDir"
-tmpTrainOutput=$(mktemp --tmpdir "$progName.elephant-train-output.XXXXXXXXX")
+tmpTrainOutput=$(mktemp --tmpdir "tmp.$progName.elephant-train-output.XXXXXXXXX")
 command="elephant-train $options -m \"$modelDir\" -w \"$patternFile\"  -i \"$iobFile\" 2>$tmpTrainOutput"
 eval "$command"
 if [ $? -ne 0 ] || grep error $tmpTrainOutput; then

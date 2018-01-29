@@ -18,11 +18,14 @@ paramsModelName="elephant"
 splitDevFile=""
 missingBScript="yep"
 
+generatePatternsString=""
+patternsFile=""
+maxNoProgress=""
 
 
 function usage {
   echo
-  echo "Usage: $progName [options] <input directory> <pattern file> <output directory>"
+  echo "Usage: $progName [options] <input directory> <output directory>"
   echo
   echo "  Trains multiple tokenizers using pre-tokenized data in .conllu format. This"
   echo "  script is intended to be used with the Universal Dependencies 2.0 corpus."
@@ -33,11 +36,20 @@ function usage {
   echo "  training an Elephant model, then the model is applied to the latter, used as"
   echo "  test data. Additionally, a baseline tokenizer is applied to the test data"
   echo "  and evaluation is performed for both the trained and the baseline tokenizer."
+  echo "  By default an optimal Wapiti pattern is obtained by using cross-validation"
+  echo "  for a set of patterns generated automatically (see options -g and -i)."
   echo
   echo "  Options:"
   echo "    -h this help"
   echo "    -t training only; by default the tokenizer model is also applied to the"
   echo "       test dataset."
+  echo "    -g <parameters for generating patterns> parameter string which specifies"
+  echo "       which patterns are generated; transmitted as option -s when calling"
+  echo "       script generate-patterns.sh; call this script with -h for more details."
+  echo "    -i <list of patterns file> use this specific list of pattern files instead"
+  echo "       of generating the list automatically."
+  echo "    -m <max no progress> specify the max number of patterns with no progress for"
+  echo "       stopping the process; 0 means process all files; default: $stopCriterionMax."
   echo "    -p <train file pattern> pattern to use for finding the train file;"
   echo "       default: '$trainFilePattern'"
   echo "    -P <test file pattern> pattern to use for finding the test file;"
@@ -64,11 +76,14 @@ function usage {
 
 
 OPTIND=1
-while getopts 'htp:P:efln:s:b' option ; do 
+while getopts 'htg:i:m:p:P:efln:s:b' option ; do 
     case $option in
 	"h" ) usage
  	      exit 0;;
 	"t" ) testing="";;
+	"g" ) generatePatternsString="$OPTARG";;
+	"i" ) patternsFile="$OPTARG";;
+	"m" ) maxNoProgress="$OPTARG";;
 	"p" ) trainFilePattern="$OPTARG";;
 	"P" ) testFilePattern="$OPTARG";;
 	"e" ) elman="yep";;
@@ -83,8 +98,8 @@ while getopts 'htp:P:efln:s:b' option ; do
     esac
 done
 shift $(($OPTIND - 1))
-if [ $# -ne 3 ]; then
-    echo "Error: expecting 3 args." 1>&2
+if [ $# -ne 2 ]; then
+    echo "Error: expecting 2 args." 1>&2
     printHelp=1
 fi
 
@@ -93,13 +108,28 @@ if [ ! -z "$printHelp" ]; then
     exit 1
 fi
 inputDir="$1"
-patternFile="$2"
-outputDir="$3"
+outputDir="$2"
 
 if [ ! -z "$force" ]; then
     rm -rf $outputDir
 fi
 [ -d "$outputDir" ] || mkdir "$outputDir"
+
+if [ -z "$patternsFile" ]; then
+    patternsFile="$outputDir/patterns.list"
+    [ -d "$outputDir/patterns" ] || mkdir "$outputDir/patterns"
+    opts=""
+    if [ ! -z "$generatePatternsString" ]; then
+	opts="-s \"$generatePatternsString\""
+    fi
+    echo "* Generating patterns to '$patternsFile';" 1>&2
+    comm="generate-patterns.pl $opts \"$outputDir/patterns/\" >\"$patternsFile\""
+    eval "$comm"
+    if [ $? -ne 0 ]; then
+	echo "An error occured when running '$comm', aborting" 1>&2
+	exit 54
+    fi
+fi
 
 for dataDir in "$inputDir"/*; do
     if [ -d "$dataDir" ]; then
@@ -132,7 +162,10 @@ for dataDir in "$inputDir"/*; do
 		# TRAINING
 		workDir="$outputDir/$data"
 		prefix="$workDir/$paramsModelName"
-		opts="-q"
+		opts="-q -t \"$prefix.elephant-model\""
+		if [ ! -z  "$maxNoProgress" ]; then
+		    opts="$opts -s \"$maxNoProgress\""
+		fi
 		[ -d "$workDir" ] || mkdir "$workDir"
 		processWithElman="" # by default wapiti model without Elman
 		if [ ! -z "$elman" ]; then
@@ -146,8 +179,8 @@ for dataDir in "$inputDir"/*; do
 		    fi
 		fi
 		if [ ! -z "$processWithElman" ] || [ ! -s "$prefix.elephant-model/wapiti" ]; then # Training main Wapiti model
-		    echo -n "training CRF model; " 1>&2
-		    command="train-tokenizer-from-UD-corpus.sh $opts \"$trainFile\" \"$patternFile\" \"$prefix.elephant-model\""
+		    echo "Cross-validation for finding best CRF model; " 1>&2
+		    command="cv-tokenizers-from-UD-corpus.sh $opts  \"$trainFile\" \"$patternsFile\" \"$prefix.cv.perf\""
 		    eval "$command"
 		    if [ ! -s "$prefix.elephant-model/wapiti" ]; then
 			echo "An error occured during training. Command was: '$command'" 1>&2
