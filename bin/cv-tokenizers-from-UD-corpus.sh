@@ -209,6 +209,7 @@ if [ ! -z "$outputModelDir" ]; then # train on full training data for best patte
 	echo "An error occured when running '$comm'" 1>&2
 	exit 6
     fi
+    cp "$bestPatternFile" "$outputModelDir" # copying the pattern as well, just in case it's needed later for some reason
 fi
 
 if [ -z "$keepFiles" ]; then

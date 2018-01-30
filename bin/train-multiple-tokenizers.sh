@@ -171,18 +171,20 @@ for dataDir in "$inputDir"/*; do
 		    opts="$opts -s \"$maxNoProgress\" -c $nbFold"
 		fi
 		[ -d "$workDir" ] || mkdir "$workDir"
-		processWithElman="" # by default wapiti model without Elman
 		if [ ! -z "$elman" ]; then
 		    if [ ! -s "$workDir/elman.model" ]; then # Training Elman LM
 			echo -n "training LM; " 1>&2
 			train-lm-from-UD-corpus.sh -q "$trainFile" "$workDir/elman.model"
 		    fi
 		    opts="$opts -e \"$workDir/elman.model\""
-		    if [ ! -s "$prefix.elephant-model/elman" ]; then # require Elman in wapiti model (for case where it was computed before without Elman)
-			processWithElman="yep"
-		    fi
 		fi
-		if [ ! -z "$processWithElman" ] || [ ! -s "$prefix.elephant-model/wapiti" ]; then # Training main Wapiti model
+		# remark: originally the test below also depended on the existence of the Elman model in the output dir;
+		# however it is now impossible to know whether the output dir should contain the Elman model or not,
+		# since this depends which pattern was selected. This is why we now test only the Wapiti model,
+		# assuming that the model was selected with the same parameters (as this was the only case in which
+		# the wapiti model would exist but not the elman one). If parameters have changed, the user should
+		#  use the 'force' option anyway.
+		if [ ! -s "$prefix.elephant-model/wapiti" ]; then # Training main Wapiti model
 		    echo -n "${nbFold}-fold CV for finding best CRF model; " 1>&2
 		    command="cv-tokenizers-from-UD-corpus.sh $opts  \"$trainFile\" \"$patternsFile\" \"$prefix.cv.perf\""
 		    eval "$command"
