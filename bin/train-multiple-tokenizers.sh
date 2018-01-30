@@ -183,7 +183,7 @@ for dataDir in "$inputDir"/*; do
 		    fi
 		fi
 		if [ ! -z "$processWithElman" ] || [ ! -s "$prefix.elephant-model/wapiti" ]; then # Training main Wapiti model
-		    echo "${nbFold}-fold CV for finding best CRF model; " 1>&2
+		    echo -n "${nbFold}-fold CV for finding best CRF model; " 1>&2
 		    command="cv-tokenizers-from-UD-corpus.sh $opts  \"$trainFile\" \"$patternsFile\" \"$prefix.cv.perf\""
 		    eval "$command"
 		    if [ ! -s "$prefix.elephant-model/wapiti" ]; then
@@ -219,7 +219,7 @@ for dataDir in "$inputDir"/*; do
 			generic-tokenizer.pl -B T -i "$workDir/baseline.txt" >"$workDir/baseline.iob"
 			cleanupFiles="$cleanupFiles $workDir/baseline.iob $workDir/baseline.txt"
 			# 3. evaluate baseline
-			evaluate.pl "$workDir/baseline.iob:2" "$workDir/gold.iob:2" >"$workDir/baseline.eval"
+			evaluate.pl -B T "$workDir/baseline.iob:2" "$workDir/gold.iob:2" >"$workDir/baseline.eval"
 		    fi
 		fi
 	    fi

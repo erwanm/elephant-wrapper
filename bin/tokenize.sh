@@ -176,7 +176,7 @@ if [ ! -z "$iobOpt" ]; then
 	else  # if no output file, print to STDERR
 	    redirectOutput=" 1>&2"
 	fi
-	command="evaluate.pl \"$output:2\" \"$textFile:2\" $redirectOutput"
+	command="evaluate.pl -B T \"$output:2\" \"$textFile:2\" $redirectOutput"
 	eval "$command"
     fi
     
