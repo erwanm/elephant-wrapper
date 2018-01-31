@@ -84,15 +84,6 @@ train-lm-from-UD-corpus.sh corpus.conllu elman.lm
 train-tokenizer-from-UD-corpus.sh -e corpus.conllu patterns/code7.txt my-output-dir
 ~~~~
 
-#### Training a tokenizer for each of the 70 datasets in UD 2
-
-With directory `ud-treebanks-v2.0` containing the 70 datasets in the Universal Dependencies 2 data:
-
-~~~~
-train-multiple-tokenizers.sh -e -l -s 0.8 ud-treebanks-v2.0 patterns/code7.txt my-output-dir
-~~~~
-
-You can also replicate this experiment using the script `bin/experiments/01-train-full-UD2.sh`, which takes care of downloading and extracting the UD2 data for you.
 
 #### Other options
 
@@ -108,10 +99,16 @@ Download the data from https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/
 
 The following command was used to generate the tokenizers provided in `models`. For every dataset, 96 patterns are tested using 5-fold cross-validation, then the optimal pattern (maximum accuracy) is used to train the final tokenizer.
 
+With directory `ud-treebanks-v2.1` containing the datasets in the Universal Dependencies 2.1 data:
+
 ~~~
 train-multiple-tokenizers.sh -e -m 0 -g 3,8,1,2,2,1 ud-treebanks-v2.1/ tokenizers # very long!
 generate-iso639-codes-file.sh ud-treebanks-v2.1/ >tokenizers/iso639-codes.txt
 ~~~
+
+This experiment can be replicated using the script `bin/experiments/01-train-full-UD2.sh` (which also takes care of downloading and extracting the UD2 data).
+
+
 
 # Changelog
 
