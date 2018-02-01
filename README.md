@@ -8,11 +8,11 @@ This software is a wrapper for the [Elephant tokenizer](http://gmb.let.rug.nl/el
 
 This wrapper aims at improving the usability of the original [Elephant](http://gmb.let.rug.nl/elephant) system. In particular, scripts are provided to facilitate the task of training a new model:
 
-- `untokenize.pl` converts files in .conllu format from the [Universal Dependencies 2.1](http://universaldependencies.org/) corpora to the IOB format (required for training a tokenizer);
+- `untokenize.pl` converts files in .conllu format from the [Universal Dependencies 2.x](http://universaldependencies.org/) corpora to the IOB format (required for training a tokenizer);
 - `generate-patterns.pl` generates Wapiti patterns automatically;
 - `cv-tokenizers-from-UD-corpus.sh` runs cross-validation experiments with multiple pattern files, in order to select the optimal pattern for a dataset;
-- `train-multiple-tokenizers.sh` streamlines the process of training tokenizers for multiple datasets provided in the same format, like the [Universal Dependencies 2.1](http://universaldependencies.org/) corpora.
-- The models trained from the Universal Dependencies 2.0 datasets; this means that this software include tokenizers for 50 languages (see usage below).
+- `train-multiple-tokenizers.sh` streamlines the process of training tokenizers for multiple datasets provided in the same format, like the [Universal Dependencies 2.x](http://universaldependencies.org/) corpora.
+- The models trained from the Universal Dependencies 2.x datasets; this means that this software include tokenizers for 50 languages (see usage below).
 
 
 
@@ -91,32 +91,37 @@ For more details, most scripts in the `bin` directory display a usage message wh
 
 # Experiments
 
-## Download the UD 2.1 corpus
+## Download the UD 2.x corpus
 
-Download the data from https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-2515.
+Download the data from https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-2515 (UD version 2.1).
 
-## Generating a tokenizer for every corpus in the UD 2.1 data
+## Generating a tokenizer for every corpus in the UD 2.x data
 
-The following command was used to generate the tokenizers provided in `models`. For every dataset, 96 patterns are tested using 5-fold cross-validation, then the optimal pattern (maximum accuracy) is used to train the final tokenizer.
+The following command can be used to generate the tokenizers provided in `models`. For every dataset, 96 patterns are tested using 5-fold cross-validation, then the optimal pattern (according to maximum accuracy) is used to train the final tokenizer.
 
-With directory `ud-treebanks-v2.1` containing the datasets in the Universal Dependencies 2.1 data:
+With directory `ud-treebanks` containing the datasets in the Universal Dependencies 2.x data:
 
 ~~~
-train-multiple-tokenizers.sh -e -m 0 -g 3,8,1,2,2,1 ud-treebanks-v2.1/ tokenizers # very long!
-generate-iso639-codes-file.sh ud-treebanks-v2.1/ >tokenizers/iso639-codes.txt
+advanced-training-UD.sh -s 0.8 -l -e -m 0 -g 3,8,1,2,2,1 ud-treebanks tokenizers
 ~~~
 
-This experiment can be replicated using the script `bin/experiments/01-train-full-UD2.sh` (which also takes care of downloading and extracting the UD2 data).
+Runnning this process will easily take several days on a modern machine. A simple way to process datasets in parallel consists in using option `-d`, which only prints the individual command needed for each dataset. The output can be redirected to a file, then the file can be split into the required number of batches. For instance, the following shows how to split the UD 2.1 data, which contains 102 datasets, into 17 batches of 6 datasets:
 
+~~~
+advanced-training-UD.sh -d -s 0.8 -l -e -m 0 -g 3,8,1,2,2,1 ud-treebanks-v2.1/ tokenizers >all.tasks
+split -d -l 6 all.tasks batch.
+for f in batch.??; do bash $f &; done
+~~~
 
 
 # Changelog
 
 ## Unreleased
 
+- [added] option `-d` to generate individual commands by dataset in `train-multiple-tokenizers.sh`, so that tasks can be run in parallel.
+- [added] script advanced-training.sh to process an individual dataset with cross-validation to select the best model.
 - [changed] updated README documentation.
-- [added] option to generate individual commands by dataset in `train-multiple-tokenizers.sh`, so that tasks can be run in parallel. 
-- [removed] the ISO language codes are no longer generated in `train-multiple-tokenizers.sh`, it has to be called independently.
+- [changed] updated version of UD data from 2.0 to 2.x in scripts and examples.
 
 ## 0.2.1
 
