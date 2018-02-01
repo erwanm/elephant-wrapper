@@ -6,7 +6,7 @@ progName=$(basename "$BASH_SOURCE")
 
 
 trainFilePattern="*train*.conllu"
-testFilePattern="*dev*.conllu"
+testFilePattern="*test*.conllu"
 
 iso639File="iso639-codes.txt"
 
