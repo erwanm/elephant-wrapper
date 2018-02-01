@@ -75,5 +75,5 @@ fi
 
 echo 1>&2
 echo "* Training tokenizers..." 1>&2
-comm="train-multiple-tokenizers.sh -e -l -s 0.8 $ud2Dir patterns/code7.txt $outputDir"
+comm="train-multiple-tokenizers.sh -e -m 0 -g 3,8,1,2,2,1 ud-treebanks-v2.1/ $outputDir"
 eval "$comm"

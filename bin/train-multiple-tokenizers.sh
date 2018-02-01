@@ -11,25 +11,23 @@ testFilePattern="*dev*.conllu"
 iso639File="iso639-codes.txt"
 
 testing="yep"
-elman=""
 force=""
 iso639mapping=""
-paramsModelName="elephant"
 splitDevFile=""
-missingBScript="yep"
 
 generatePatternsString=""
 patternsFile=""
-maxNoProgress=""
-nbFold=5
 
+optsAdvancedTraining=""
+
+delayed=""
 
 function usage {
   echo
   echo "Usage: $progName [options] <input directory> <output directory>"
   echo
   echo "  Trains multiple tokenizers using pre-tokenized data in .conllu format. This"
-  echo "  script is intended to be used with the Universal Dependencies 2.0 corpus."
+  echo "  script is intended to be used with the Universal Dependencies 2.x corpus."
   echo
   echo "  It is assumed that <input directory> contains one directory by dataset, and"
   echo "  that every such directory contains a file which matches '$trainFilePattern',"
@@ -50,8 +48,8 @@ function usage {
   echo "    -i <list of patterns file> use this specific list of pattern files instead"
   echo "       of generating the list automatically."
   echo "    -m <max no progress> specify the max number of patterns with no progress for"
-  echo "       stopping the process; 0 means process all files; default: $stopCriterionMax."
-  echo "    -k <K> value for k-fold cross-validation; default: $nbFold."
+  echo "       stopping the process; 0 means process all files."
+  echo "    -k <K> value for k-fold cross-validation."
   echo "    -p <train file pattern> pattern to use for finding the train file;"
   echo "       default: '$trainFilePattern'"
   echo "    -P <test file pattern> pattern to use for finding the test file;"
@@ -63,7 +61,7 @@ function usage {
   echo "       filenames start with the ISO639 language codes (intended for UD2 corpus)."
   echo "    -n <parameters model name> name to use for the parameters model directory;"
   echo "       this is useful when runnning this script several times with different"
-  echo "       parameters. Default: '$paramsModelName'."
+  echo "       parameters."
   echo "    -s <training set proportion> Split test file into training and test set if "
   echo "       no training file is found (this is a workaround for the two languages in"
   echo "       UD2 for which only a dev file is supplied: UD_Kazakh and UD_Uyghur)."
@@ -71,6 +69,9 @@ function usage {
   echo "    -b do not apply script to fix missing B labels in testing: applied by"
   echo "       default, but should not be applied if tokens can include whitespaces."
   echo "       Ignored if -t is supplied."
+  echo "    -d delay processing: instead of calling the script advanced-training.sh,"
+  echo "       the command is printed to STDOUT for every dataset. This allows"
+  echo "       dsitributed processing later."
   echo 
 }
 
@@ -78,23 +79,25 @@ function usage {
 
 
 OPTIND=1
-while getopts 'htg:i:m:k:p:P:efln:s:b' option ; do 
+while getopts 'htg:i:m:k:p:P:efln:s:bd' option ; do 
     case $option in
 	"h" ) usage
  	      exit 0;;
 	"t" ) testing="";;
 	"g" ) generatePatternsString="$OPTARG";;
 	"i" ) patternsFile="$OPTARG";;
-	"m" ) maxNoProgress="$OPTARG";;
-	"k" ) nbFold="$OPTARG";;
+	"m" ) optsAdvancedTraining="$optsAdvancedTraining -m \"$OPTARG\"";;
+	"k" ) optsAdvancedTraining="$optsAdvancedTraining -k \"$OPTARG\"";;
 	"p" ) trainFilePattern="$OPTARG";;
 	"P" ) testFilePattern="$OPTARG";;
-	"e" ) elman="yep";;
+	"e" ) optsAdvancedTraining="$optsAdvancedTraining -e";;
 	"f" ) force="yep";;
 	"l" ) iso639mapping="yep";;
-	"n" ) paramsModelName="$OPTARG";;
+	"n" ) optsAdvancedTraining="$optsAdvancedTraining -n \"$OPTARG\"";;
 	"s" ) splitDevFile="$OPTARG";;
-	"b" ) missingBScript="";;
+	"b" ) optsAdvancedTraining="$optsAdvancedTraining -b";;
+	"d" ) optsAdvancedTraining="$optsAdvancedTraining -q"
+	      delayed="yes";;
  	"?" ) 
 	    echo "Error, unknow option." 1>&2
             printHelp=1;;
@@ -135,12 +138,11 @@ if [ -z "$patternsFile" ]; then
     fi
 fi
 
+
 for dataDir in "$inputDir"/*; do
     if [ -d "$dataDir" ]; then
-	cleanupFiles=""
 	testingThis="$testing"
 	data=$(basename "$dataDir")
-	echo -n "* Processing '$data': " 1>&2
 	lsPatTrain="$dataDir/$trainFilePattern"
 	trainFile=$(ls $lsPatTrain 2>/dev/null | head -n 1)
 	lsPatTest="$dataDir/$testFilePattern"
@@ -148,6 +150,13 @@ for dataDir in "$inputDir"/*; do
 	if [ -z "$trainFile" ] && [ -z "$testFile" ]; then
 	    echo "Warning: no file matches '$lsPatTrain' neither '$lsPatTest', ignoring dataset '$data'." 1>&2
 	else
+	    opts="$optsAdvancedTraining"
+	    if [ -z "$testFile" ]; then
+		echo "Warning: no file matches '$lsPatTest', skipping testing for '$data'." 1>&2
+	    else
+		opts="$opts -t \"$testFile\""
+	    fi
+	    
 	    # from here we have either a train set or a test set
 	    if [ -z "$trainFile" ] && [ -z "$splitDevFile" ]; then
 		echo "Warning: no file matches '$lsPatTrain' for training and no option -s, ignoring dataset '$data'." 1>&2
@@ -159,77 +168,19 @@ for dataDir in "$inputDir"/*; do
 		    split-conllu-sentences.pl -b "$prefixSplit." -p "$splitDevFile" "$testFile"
 		    trainFile="$prefixSplit.1"
 		    testFile="$prefixSplit.2"
-		    cleanupFiles="$cleanupFiles $prefixSplit.1 $prefixSplit.2"
+		    opts="$opts -r \"$cleanupFiles $prefixSplit.1 $prefixSplit.2\""
 		fi
 		# now we have a train set, but it's still possible we don't have a test set; we're doing the training anyway
+		command="advanced-training.sh $opts \"$trainFile\" \"$patternsFile\" \"$outputDir/$data\""
 
-		# TRAINING
-		workDir="$outputDir/$data"
-		prefix="$workDir/$paramsModelName"
-		opts="-q -t \"$prefix.elephant-model\""
-		if [ ! -z  "$maxNoProgress" ]; then
-		    opts="$opts -s \"$maxNoProgress\" -c $nbFold"
-		fi
-		[ -d "$workDir" ] || mkdir "$workDir"
-		if [ ! -z "$elman" ]; then
-		    if [ ! -s "$workDir/elman.model" ]; then # Training Elman LM
-			echo -n "training LM; " 1>&2
-			train-lm-from-UD-corpus.sh -q "$trainFile" "$workDir/elman.model"
-		    fi
-		    opts="$opts -e \"$workDir/elman.model\""
-		fi
-		# remark: originally the test below also depended on the existence of the Elman model in the output dir;
-		# however it is now impossible to know whether the output dir should contain the Elman model or not,
-		# since this depends which pattern was selected. This is why we now test only the Wapiti model,
-		# assuming that the model was selected with the same parameters (as this was the only case in which
-		# the wapiti model would exist but not the elman one). If parameters have changed, the user should
-		#  use the 'force' option anyway.
-		if [ ! -s "$prefix.elephant-model/wapiti" ]; then # Training main Wapiti model
-		    echo -n "${nbFold}-fold CV for finding best CRF model; " 1>&2
-		    command="cv-tokenizers-from-UD-corpus.sh $opts  \"$trainFile\" \"$patternsFile\" \"$prefix.cv.perf\""
+		if [ -z "$delayed" ]; then
 		    eval "$command"
-		    if [ ! -s "$prefix.elephant-model/wapiti" ]; then
-			echo "An error occured during training. Command was: '$command'" 1>&2
-			echo "Skipping dataset '$data'" 1>&2
-			testingThis="" # skip testing
-		    fi
+		else
+		    echo "$command"
 		fi
-
-		# TESTING
-		if [ ! -z "$testingThis" ]; then
-		    if [ -z "$testFile" ]; then
-			echo "Warning: no file matches '$lsPatTest' for '$data', skipping testing." 1>&2
-		    else
-			echo -n "testing; " 1>&2
-			# get IOB gold output
-			untokenize.pl -i -f UD -C 1 -B T "$testFile" >"$workDir/gold.iob"
-			cleanupFiles="$cleanupFiles $workDir/gold.iob"
-			opts=""
-			if [ -z "$missingBScript" ]; then
-			    opts="-b"
-			fi
-			# remark: evaluation is also done by tokenize.sh
-			command="tokenize.sh $opts -q -c -I -i \"$testFile\" -o \"$prefix\"  \"$prefix.elephant-model\""
-			eval "$command"
-			cleanupFiles="$cleanupFiles $prefix"
-
-			echo -n "baseline; " 1>&2
-			# the following 3 steps are for baseline tokenizer only:
-			# 1. get text file from test UD conllu file
-			untokenize.pl -f UD -C 1 -B T "$testFile" >"$workDir/baseline.txt"
-			# 2. tokenize it with baseline tokenizer
-			generic-tokenizer.pl -B T -i "$workDir/baseline.txt" >"$workDir/baseline.iob"
-			cleanupFiles="$cleanupFiles $workDir/baseline.iob $workDir/baseline.txt"
-			# 3. evaluate baseline
-			evaluate.pl -B T "$workDir/baseline.iob:2" "$workDir/gold.iob:2" >"$workDir/baseline.eval"
-		    fi
-		fi
+		
 	    fi
 	fi
-	if [ ! -z "$cleanupFiles" ]; then
-	    rm -f $cleanupFiles
-	fi
-	echo 1>&2
     fi
 done
 if [ ! -z "$iso639mapping" ]; then
