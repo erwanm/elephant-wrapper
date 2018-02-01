@@ -110,7 +110,7 @@ Runnning this process will easily take several days on a modern machine. A simpl
 ~~~
 advanced-training-UD.sh -d -s 0.8 -l -e -m 0 -g 3,8,1,2,2,1 ud-treebanks-v2.1/ tokenizers >all.tasks
 split -d -l 6 all.tasks batch.
-for f in batch.??; do bash $f &; done
+for f in batch.??; do (bash $f &); done
 ~~~
 
 
