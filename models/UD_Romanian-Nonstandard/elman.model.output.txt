@@ -1,0 +1,25 @@
+
+iter: 0
+valid log probability: -10417.109773
+PPL net: 13.113410
+Error 6779 / 9320 = 0.727361
+
+iter: 1
+valid log probability: -10282.422179
+PPL net: 12.684232
+Error 6679 / 9320 = 0.716631
+
+iter: 2
+valid log probability: -10280.640657
+PPL net: 12.678651
+Error 6633 / 9320 = 0.711695
+
+iter: 3
+valid log probability: -10227.707035
+PPL net: 12.513922
+Error 6644 / 9320 = 0.712876
+
+iter: 4
+valid log probability: -10219.064424
+PPL net: 12.487231
+Error 6658 / 9320 = 0.714378

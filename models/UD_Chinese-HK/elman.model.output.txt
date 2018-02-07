@@ -1,0 +1,20 @@
+
+iter: 0
+valid log probability: -597.989165
+PPL net: 170.334592
+Error 262 / 268 = 0.977612
+
+iter: 1
+valid log probability: -595.499227
+PPL net: 166.729344
+Error 262 / 268 = 0.977612
+
+iter: 2
+valid log probability: -594.681088
+PPL net: 165.561474
+Error 254 / 268 = 0.947761
+
+iter: 3
+valid log probability: -593.109950
+PPL net: 163.341608
+Error 256 / 268 = 0.955224

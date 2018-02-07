@@ -1,0 +1,120 @@
+
+iter: 0
+valid log probability: -1820.893710
+PPL net: 26.732076
+Error 1065 / 1276 = 0.834639
+
+iter: 1
+valid log probability: -1557.169506
+PPL net: 16.609336
+Error 944 / 1276 = 0.739812
+
+iter: 2
+valid log probability: -1418.771674
+PPL net: 12.938682
+Error 898 / 1276 = 0.703762
+
+iter: 3
+valid log probability: -1314.256011
+PPL net: 10.714729
+Error 817 / 1276 = 0.640282
+
+iter: 4
+valid log probability: -1241.435040
+PPL net: 9.395318
+Error 776 / 1276 = 0.608150
+
+iter: 5
+valid log probability: -1197.015188
+PPL net: 8.671609
+Error 762 / 1276 = 0.597179
+
+iter: 6
+valid log probability: -1172.741351
+PPL net: 8.299966
+Error 740 / 1276 = 0.579937
+
+iter: 7
+valid log probability: -1158.213146
+PPL net: 8.085196
+Error 721 / 1276 = 0.565047
+
+iter: 8
+valid log probability: -1151.592480
+PPL net: 7.989175
+Error 717 / 1276 = 0.561912
+
+iter: 9
+valid log probability: -1146.408767
+PPL net: 7.914791
+Error 718 / 1276 = 0.562696
+
+iter: 10
+valid log probability: -1140.069309
+PPL net: 7.824764
+Error 707 / 1276 = 0.554075
+
+iter: 11
+valid log probability: -1132.291331
+PPL net: 7.715706
+Error 706 / 1276 = 0.553292
+
+iter: 12
+valid log probability: -1122.113912
+PPL net: 7.575296
+Error 692 / 1276 = 0.542320
+
+iter: 13
+valid log probability: -1113.600692
+PPL net: 7.459811
+Error 685 / 1276 = 0.536834
+
+iter: 14
+valid log probability: -1105.432677
+PPL net: 7.350664
+Error 675 / 1276 = 0.528997
+
+iter: 15
+valid log probability: -1097.726088
+PPL net: 7.249147
+Error 665 / 1276 = 0.521160
+
+iter: 16
+valid log probability: -1090.407661
+PPL net: 7.154042
+Error 654 / 1276 = 0.512539
+
+iter: 17
+valid log probability: -1084.764478
+PPL net: 7.081559
+Error 656 / 1276 = 0.514107
+
+iter: 18
+valid log probability: -1079.257504
+PPL net: 7.011535
+Error 651 / 1276 = 0.510188
+
+iter: 19
+valid log probability: -1076.307568
+PPL net: 6.974310
+Error 643 / 1276 = 0.503918
+
+iter: 20
+valid log probability: -1048.742783
+PPL net: 6.635883
+Error 635 / 1276 = 0.497649
+
+iter: 21
+valid log probability: -1025.535735
+PPL net: 6.363725
+Error 623 / 1276 = 0.488245
+
+iter: 22
+valid log probability: -1015.341654
+PPL net: 6.247731
+Error 611 / 1276 = 0.478840
+
+iter: 23
+valid log probability: -1012.449367
+PPL net: 6.215207
+Error 615 / 1276 = 0.481975

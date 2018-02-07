@@ -1,0 +1,20 @@
+
+iter: 0
+valid log probability: -198.194871
+PPL net: 80.485921
+Error 95 / 104 = 0.913462
+
+iter: 1
+valid log probability: -196.971400
+PPL net: 78.334985
+Error 95 / 104 = 0.913462
+
+iter: 2
+valid log probability: -196.600487
+PPL net: 77.694325
+Error 95 / 104 = 0.913462
+
+iter: 3
+valid log probability: -196.202269
+PPL net: 77.012332
+Error 95 / 104 = 0.913462

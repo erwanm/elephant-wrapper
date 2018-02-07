@@ -1,0 +1,65 @@
+
+iter: 0
+valid log probability: -6223.908783
+PPL net: 13.134160
+Error 4025 / 5565 = 0.723270
+
+iter: 1
+valid log probability: -6012.250279
+PPL net: 12.032848
+Error 3911 / 5565 = 0.702785
+
+iter: 2
+valid log probability: -5878.340954
+PPL net: 11.384282
+Error 3844 / 5565 = 0.690746
+
+iter: 3
+valid log probability: -5810.401471
+PPL net: 11.068717
+Error 3770 / 5565 = 0.677448
+
+iter: 4
+valid log probability: -5767.247440
+PPL net: 10.872834
+Error 3749 / 5565 = 0.673675
+
+iter: 5
+valid log probability: -5725.707690
+PPL net: 10.687553
+Error 3696 / 5565 = 0.664151
+
+iter: 6
+valid log probability: -5693.830136
+PPL net: 10.547513
+Error 3676 / 5565 = 0.660557
+
+iter: 7
+valid log probability: -5682.481469
+PPL net: 10.498102
+Error 3650 / 5565 = 0.655885
+
+iter: 8
+valid log probability: -5579.613607
+PPL net: 10.060649
+Error 3574 / 5565 = 0.642228
+
+iter: 9
+valid log probability: -5520.495905
+PPL net: 9.817544
+Error 3537 / 5565 = 0.635580
+
+iter: 10
+valid log probability: -5486.258463
+PPL net: 9.679448
+Error 3518 / 5565 = 0.632165
+
+iter: 11
+valid log probability: -5462.103905
+PPL net: 9.583191
+Error 3500 / 5565 = 0.628931
+
+iter: 12
+valid log probability: -5446.731022
+PPL net: 9.522428
+Error 3489 / 5565 = 0.626954

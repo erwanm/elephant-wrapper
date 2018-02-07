@@ -1,0 +1,50 @@
+
+iter: 0
+valid log probability: -79800.735141
+PPL net: 10.925041
+Error 54090 / 76848 = 0.703857
+
+iter: 1
+valid log probability: -78328.596805
+PPL net: 10.453616
+Error 53376 / 76848 = 0.694566
+
+iter: 2
+valid log probability: -78067.844018
+PPL net: 10.372262
+Error 53422 / 76848 = 0.695164
+
+iter: 3
+valid log probability: -77952.668381
+PPL net: 10.336529
+Error 53305 / 76848 = 0.693642
+
+iter: 4
+valid log probability: -75343.277347
+PPL net: 9.559155
+Error 51852 / 76848 = 0.674735
+
+iter: 5
+valid log probability: -73766.939471
+PPL net: 9.118157
+Error 50875 / 76848 = 0.662021
+
+iter: 6
+valid log probability: -72881.155212
+PPL net: 8.879339
+Error 50393 / 76848 = 0.655749
+
+iter: 7
+valid log probability: -72387.117421
+PPL net: 8.748868
+Error 50032 / 76848 = 0.651051
+
+iter: 8
+valid log probability: -72151.335372
+PPL net: 8.687278
+Error 49614 / 76848 = 0.645612
+
+iter: 9
+valid log probability: -72056.245773
+PPL net: 8.662562
+Error 49469 / 76848 = 0.643725
