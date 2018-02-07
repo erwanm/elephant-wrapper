@@ -105,7 +105,7 @@ With directory `ud-treebanks` containing the datasets in the Universal Dependenc
 advanced-training-UD.sh -s 0.8 -l -e -m 0 -g 3,8,1,2,2,1 ud-treebanks tokenizers
 ~~~
 
-Runnning this process will easily take several days on a modern machine. A simple way to process datasets in parallel consists in using option `-d`, which only prints the individual command needed for each dataset. The output can be redirected to a file, then the file can be split into the required number of batches. For instance, the following shows how to split the UD 2.1 data, which contains 102 datasets, into 17 batches of 6 datasets:
+Runnning this process will easily take several days on a modern machine. A basic way to process datasets in parallel consists in using option `-d`, which only prints the individual command needed for each dataset. The output can be redirected to a file, then the file can be split into the required number of batches. For instance, the following shows how to split the UD 2.1 data, which contains 102 datasets, into 17 batches of 6 datasets:
 
 ~~~
 advanced-training-UD.sh -d -s 0.8 -l -e -m 0 -g 3,8,1,2,2,1 ud-treebanks-v2.1/ tokenizers >all.tasks
@@ -113,15 +113,18 @@ split -d -l 6 all.tasks batch.
 for f in batch.??; do (bash $f &); done
 ~~~
 
+Remark: since the datasets have different sizes, some batches will probably take more time than others.
+
 
 # Changelog
 
-## Unreleased
+## 0.2.2
 
-- [added] option `-d` to generate individual commands by dataset in `train-multiple-tokenizers.sh`, so that tasks can be run in parallel.
 - [added] script advanced-training.sh to process an individual dataset with cross-validation to select the best model.
-- [changed] updated README documentation.
+- [changed] updated pred-tokenized models: (1) better performance using optimal pattern for each dataset; (2) updating corpus to UD 2.1, with more languages/datasets
 - [changed] updated version of UD data from 2.0 to 2.x in scripts and examples.
+- [added] option `-d` to generate individual commands by dataset in `train-multiple-tokenizers.sh`, so that tasks can be run in parallel.
+- [changed] updated README documentation.
 
 ## 0.2.1
 
