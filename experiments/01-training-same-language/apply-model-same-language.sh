@@ -16,7 +16,7 @@ paramsModelName="elephant"
 iso639File="iso639-codes.txt"
 
 evalCol=4  # value to select: accuracy
-printPerfPattern="%.2f"
+printPerfPattern="%.3f"
 
 function usage {
   echo

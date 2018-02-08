@@ -12,7 +12,7 @@ expeDir="experiments/01-training-same-language/"
 udCorpus="ud-treebanks-v2.1/"
 
 for datasetFile in "$expeDir"/*.datasets; do
-    name=$(basename "$datasetFile")
+    name=$(basename "${datasetFile%.datasets}")
     comm="$expeDir/apply-model-same-language.sh \"$datasetFile\" \"$udCorpus\" \"$workDir/$name\""
     eval "$comm"
 done
