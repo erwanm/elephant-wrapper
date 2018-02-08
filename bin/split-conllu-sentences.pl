@@ -23,8 +23,7 @@ sub usage {
 	print $fh "Usage: $progname [options] <N> <conllu file>\n";
 	print $fh "\n";
 	print $fh "   Splits a conllu file (one line by token, at least one empty line between sentences)\n";
-	print $fh "   into N parts, each containing approximately the\n";
- 	print $fh "   same number of sentences.\n";
+	print $fh "   into N parts, each containing approximately the same number of sentences.\n";
  	print $fh "   The output files are named <output prefix><index><output suffix>, where\n";
  	print $fh "   by default <output prefix> is the input filename and <output suffix> is empty\n";
 	print $fh "   (see options -b and -a).\n";
@@ -37,6 +36,7 @@ sub usage {
 	print $fh "    -a <output suffix> output filename ends with this (default: empty string).\n";
 	print $fh "    -p The argument <N> is interpreted as a proportion, and the input is split into\n";
 	print $fh "       two parts of relative size N and 1-N.\n";
+ 	print $fh "    -c <cut down size> first restrict the size to this number of sentences.\n";
 	print $fh "    -v verbose mode, print size of every dataset to STDOUT.\n";
  	print $fh "\n";
 }
@@ -93,7 +93,7 @@ sub printSizeSubsets {
 
 # PARSING OPTIONS
 my %opt;
-getopts('hsb:a:pv', \%opt ) or  ( print STDERR "Error in options" &&  usage(*STDERR) && exit 1);
+getopts('hsb:a:pvc:', \%opt ) or  ( print STDERR "Error in options" &&  usage(*STDERR) && exit 1);
 usage(*STDOUT) && exit 0 if $opt{h};
 print STDERR "2 arguments expected, but ".scalar(@ARGV)." found: ".join(" ; ", @ARGV)  && usage(*STDERR) && exit 1 if (scalar(@ARGV) != 2);
 
@@ -108,6 +108,8 @@ my $outputSuffix = (defined($opt{a})) ? $opt{a} : "";
 my $proportion = defined($opt{p});
 die "Error: invalid proportion $N with option -p, N must be lower than 1" if ($proportion && ($N>1));
 my $verbose =  defined($opt{v});
+
+my $cutDownToSize = (defined($opt{c})) ? $opt{c} : 0;
 
 my @corpus;
 my $sent;
@@ -131,6 +133,15 @@ if (scalar(@$sent) >0) { # last sentence?
     $sent = [];
 }
 close(F);
+
+
+if ($cutDownToSize>0) {
+    if ($cutDownToSize > scalar(@corpus)) {
+	die "Error: corpus too small, cannot cut down size from ".scalar(@corpus)." to $cutDownToSize."
+    }
+    @corpus=@corpus[0..$cutDownToSize-1];
+}
+
 
 # 2. calculate subsets
 

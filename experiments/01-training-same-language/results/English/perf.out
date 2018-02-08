@@ -1,0 +1,5 @@
+TrainingSet	UD_English	UD_English-LinES	UD_English-ParTUT	UD_English-PUD
+UD_English	0.998	0.997	0.999	1.000
+UD_English-LinES	0.992	1.000	0.998	0.996
+UD_English-ParTUT	0.985	0.996	1.000	0.999
+UD_English-PUD	0.987	0.997	0.999	1.000

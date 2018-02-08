@@ -1,0 +1,6 @@
+TrainingSet	UD_French	UD_French-FTB	UD_French-ParTUT	UD_French-PUD	UD_French-Sequoia
+UD_French	0.999	0.914	0.999	0.998	0.999
+UD_French-FTB	0.918	1.000	0.925	0.925	0.927
+UD_French-ParTUT	0.996	0.978	1.000	0.996	0.996
+UD_French-PUD	0.997	0.911	0.999	1.000	0.998
+UD_French-Sequoia	0.998	0.986	0.999	0.997	1.000

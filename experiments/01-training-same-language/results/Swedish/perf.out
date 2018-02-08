@@ -1,0 +1,5 @@
+TrainingSet	UD_Swedish	UD_Swedish-LinES	UD_Swedish-PUD	UD_Swedish_Sign_Language
+UD_Swedish	1.000	0.999	0.998	0.936
+UD_Swedish-LinES	0.998	1.000	0.998	0.985
+UD_Swedish-PUD	0.998	0.999	1.000	0.988
+UD_Swedish_Sign_Language	0.982	0.980	0.983	1.000
