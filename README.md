@@ -118,6 +118,12 @@ Remark: since the datasets have different sizes, some batches will probably take
 
 # Changelog
 
+## Next release
+
+- [fixed] couple bugs, in particular https://github.com/erwanm/elephant-wrapper/issues/39
+- [added] experiment training size with results (paper LREC 18)
+- [added] experiment same language with results (paper LREC 18)
+
 ## 0.2.2
 
 - [added] script advanced-training.sh to process an individual dataset with cross-validation to select the best model.
