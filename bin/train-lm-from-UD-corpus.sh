@@ -70,7 +70,7 @@ tail -n $sizeValid $iobFile | cut -f 1 | tr '\n' ' ' > $iobFile.valid
 cleanupFiles="$cleanupFiles $iobFile.train $iobFile.valid"
 
 # training model
-rm -f "$modelFile"
+rm -f "$model"
 redirect=""
 if [ ! -z "$quiet" ]; then
     elmanStderr=$(mktemp --tmpdir "tmp.$progName.elman-stderr.XXXXXXXXX")
