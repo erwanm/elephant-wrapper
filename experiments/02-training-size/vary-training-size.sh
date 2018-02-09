@@ -150,7 +150,7 @@ for sampleFile in $workDir/sample.*.conllu; do
     eval "$comm"
     comm="tokenize.sh -i \"$testFile\" -o \"$workDir/$no.out\" -c -I -q \"$workDir/$no\""
     eval "$comm"
-#    rm -rf "$elmanModel" "$workDir/$no" "$workDir/$no.out"
+    rm -rf "$elmanModel" "$workDir/$no" "$workDir/$no.out"
     perf=$(cat "$workDir/$no.out.eval" | cut -f $evalCol)
     totalSent=$(( $totalSent + $nbSentencesBySample ))
     echo -e "$data\t$no\t$totalSent\t$elman\t$perf" >>"$workDir/results.tsv"
