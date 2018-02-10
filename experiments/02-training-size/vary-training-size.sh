@@ -17,6 +17,7 @@ iso639File="iso639-codes.txt"
 
 evalCol=4  # value to select: accuracy
 printPerfPattern="%.5"
+customNbsent=""
 
 function usage {
   echo
@@ -39,6 +40,8 @@ function usage {
   echo "    -e <eval column> no of evaluation output column to use; default=$evalCol;"
   echo "       (see evaluate.pl -h)"
   echo "    -p <printf perf pattern> default: $printPerfPattern."
+  echo "    -c <space separated nb sentences> custom values for nb sentences; args"
+  echo "       <nb samples> and <nb sentences/sample> are ignored."
   echo
 }
 
@@ -64,13 +67,14 @@ function findModelDir {
 
 
 OPTIND=1
-while getopts 'hn:e:p:' option ; do 
+while getopts 'hn:e:p:c:' option ; do 
     case $option in
 	"h" ) usage
  	      exit 0;;
         "n" ) paramsModelName="$OPTARG";;
 	"e" ) evalCol="$OPTARG";;
 	"p" ) printPerfPattern="$OPTARG";;
+	"c" ) customNbsent="$OPTARG";;
  	"?" ) 
 	    echo "Error, unknow option." 1>&2
             printHelp=1;;
@@ -121,10 +125,17 @@ else
     elman=0
 fi
 
-# split
-maxSize=$(( $nbSamples * $nbSentencesBySample ))
-comm="split-conllu-sentences.pl -c \"$maxSize\" -b $workDir/sample. -a .conllu $nbSamples $trainFile"
-eval "$comm"
+if [ -z "$customNbsent" ]; then
+    # split
+    maxSize=$(( $nbSamples * $nbSentencesBySample ))
+    comm="split-conllu-sentences.pl -c \"$maxSize\" -b $workDir/sample. -a .conllu $nbSamples $trainFile"
+    eval "$comm"
+else
+    for nbSent in $customNbsent; do
+	comm="split-conllu-sentences.pl -c \"$nbSent\" -b $workDir/sample.$nbSent. -a .conllu 1 $trainFile"
+	eval "$comm"
+    done
+fi
 
 totalSent=0
 echo -e "dataset\tno\tnbSentences\telman\tperf" >"$workDir/results.tsv"
@@ -132,9 +143,16 @@ echo -e "dataset\tno\tnbSentences\telman\tperf" >"$workDir/results.tsv"
 trainFile=$(mktemp --tmpdir "tmp.$progName.train.XXXXXXXXX")
 for sampleFile in $workDir/sample.*.conllu; do
 #    echo "$sampleFile..." 1>&2
-    cat "$sampleFile" >>"$trainFile"
     no=$(basename ${sampleFile%.conllu})
     no=${no#sample.}
+    if [ -z "$customNbsent" ]; then
+	cat "$sampleFile" >>"$trainFile"
+	totalSent=$(( $totalSent + $nbSentencesBySample ))
+    else
+	cat "$sampleFile" >"$trainFile"
+	no=${no%.0}
+	totalSent=$no
+    fi
     elmanModel=$(mktemp --tmpdir "tmp.$progName.elman.XXXXXXXXX")
     if [ $elman -eq 1 ]; then
 	comm="train-lm-from-UD-corpus.sh -q \"$trainFile\" \"$elmanModel\""
@@ -152,7 +170,6 @@ for sampleFile in $workDir/sample.*.conllu; do
     eval "$comm"
     rm -rf "$elmanModel" "$workDir/$no" "$workDir/$no.out"
     perf=$(cat "$workDir/$no.out.eval" | cut -f $evalCol)
-    totalSent=$(( $totalSent + $nbSentencesBySample ))
     echo -e "$data\t$no\t$totalSent\t$elman\t$perf" >>"$workDir/results.tsv"
 done
 rm -f "$trainFile" 
