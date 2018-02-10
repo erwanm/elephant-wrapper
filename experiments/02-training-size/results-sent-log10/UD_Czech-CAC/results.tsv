@@ -1,0 +1,5 @@
+dataset	no	nbSentences	elman	perf
+UD_Czech-CAC	10000	10000	1	0.99995400
+UD_Czech-CAC	1000	1000	1	0.99984667
+UD_Czech-CAC	100	100	1	0.99975467
+UD_Czech-CAC	10	10	1	0.99923334

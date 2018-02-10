@@ -1,0 +1,5 @@
+dataset	no	nbSentences	elman	perf
+UD_Italian	10000	10000	1	0.99981260
+UD_Italian	1000	1000	1	0.99853826
+UD_Italian	100	100	1	0.99840708
+UD_Italian	10	10	1	0.99465902

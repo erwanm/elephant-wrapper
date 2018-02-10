@@ -1,0 +1,5 @@
+dataset	no	nbSentences	elman	perf
+UD_French	10000	10000	0	0.99907327
+UD_French	1000	1000	0	0.99919415
+UD_French	100	100	0	0.99766303
+UD_French	10	10	0	0.99298910
