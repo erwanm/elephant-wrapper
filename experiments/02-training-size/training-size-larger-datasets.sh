@@ -13,7 +13,7 @@ else
 fi
 
 delayed=""
-
+customValues=""
 
 function usage {
   echo
@@ -29,17 +29,20 @@ function usage {
   echo "    -h this help"
   echo "    -d delay execution, instead just print the commands to STDOUT"
   echo "       so that commands can be run in parallel."
+  echo "    -c custom values for nb sentences: in this case the arg <nb samples>"
+  echo "       contains the space-separated list of values."
   echo
 }
 
 
 
 OPTIND=1
-while getopts 'dh' option ; do 
+while getopts 'dhc' option ; do 
     case $option in
 	"h" ) usage
  	      exit 0;;
 	"d" ) delayed="yep";;
+	"c" ) customValues="yep";;
  	"?" ) 
 	    echo "Error, unknow option." 1>&2
             printHelp=1;;
@@ -84,9 +87,14 @@ nbSent=$(( $size / $nbSamples ))
 
 echo "Smallest size in largest $nbDatasets datasets = $size; using $nbSamples samples of size $nbSent" 1>&2
 
+if [ ! -z "$customValues" ]; then
+    optC="-c \"$nbSamples\""
+fi
+
+
 cat "$workDir/selected-datasets.txt" | cut -f 1 | while read dataset; do
     echo "$dataset..." 1>&2
-    comm="$scriptDir/vary-training-size.sh \"$inputDir/$dataset\" \"$nbSamples\" \"$nbSent\" \"$workDir/$dataset\""
+    comm="$scriptDir/vary-training-size.sh $optC \"$inputDir/$dataset\" \"$nbSamples\" \"$nbSent\" \"$workDir/$dataset\""
     if [ -z "$delayed" ]; then
 	eval "$comm"
     else
