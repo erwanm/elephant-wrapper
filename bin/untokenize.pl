@@ -65,7 +65,7 @@ sub usage {
 	print $fh "       e.g. actual token \"didn't\" at index 3-4 is followed by \"did\"\n";
  	print $fh "       at index 3 then \"'nt\" at index 4. The script will keep only the\n";
 	print $fh "       actual token, recognized by its interval index N-M, and ignore \n";
-	print $fh "       indexes N to M. Regular indexes (I;e., not ranges) must follow\n";
+	print $fh "       indexes N to M. Regular indexes (i.e., not ranges) must follow\n";
 	print $fh "       the pattern \\d+(\\.\\d+)?\n";
 	print $fh "    -S <S label> mark sentence begining as well with <S label>; \n";
 	print $fh "       default: only tokens (labels B,I,O); used only in IOB mode.\n";

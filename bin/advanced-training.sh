@@ -36,7 +36,7 @@ function usage {
   echo "    -t <test .conll file> also perform testing of the model using this data,"
   echo "       including evaluation and applying a generic tokenizer as  baseline."
   echo "    -m <max no progress> specify the max number of patterns with no progress for"
-  echo "       stopping the process; 0 means process all files; default: $stopCriterionMax."
+  echo "       stopping the process; 0 means process all files; default: $maxNoProgress."
   echo "    -k <K> value for k-fold cross-validation; default: $nbFold."
   echo "    -e use Elman language models (usually performs better but longer training)"
   echo "    -n <parameters model name> name to use for the parameters model directory;"
@@ -101,9 +101,9 @@ if [ -z "$quietMode" ]; then
 fi
 
 
-opts="-q -t \"$prefix.elephant-model\""
+opts="-q -t \"$prefix.elephant-model\"  -c $nbFold"
 if [ ! -z  "$maxNoProgress" ]; then
-    opts="$opts -s \"$maxNoProgress\" -c $nbFold"
+    opts="$opts -s \"$maxNoProgress\""
 fi
 if [ ! -z "$iobInput" ]; then
     opts="$opts -i"

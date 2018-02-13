@@ -125,7 +125,7 @@ else
     if [ ! -z "$iobInputFormat" ]; then
 	# the problem is that elephant does not allow an option for providing the text in IOB format directly,
 	# so we must convert it to text first and it converts its back to IOB later.
-	cat "$input" | cut -f 1 | perl -e 'while (<STDIN>) { print chr($_); }' >$textFile
+	iob-to-text.pl -B T -n "$input" "$textFile"
     else
 	tr '\n' ' ' <"$input" >$textFile
     fi
@@ -144,6 +144,7 @@ fi
 # apply model
 command="elephant $iobOpt -m \"$modelDir\"  <\"$textFile\" $redirectOutput"
 eval "$command"
+
 
 # if no -I option, we're done here
 
