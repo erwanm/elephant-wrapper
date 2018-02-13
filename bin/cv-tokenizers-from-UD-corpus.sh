@@ -176,7 +176,7 @@ while [ $patternNo -le $nbPatterns ] && [ -z "$stopCriterion" ]; do
 	if [ $? -ne 0 ]; then
 	    echo "Warning: an error occured when running '$comm', skipping" 1>&2
 	else
-	    comm="cat  \"$testFile\" | tokenize.sh $testOpts -c -I -o \"$outputDir/test.out\" \"$outputDir\"" # need option -n ???
+	    comm="cat  \"$testFile\" | tokenize.sh $testOpts -I -o \"$outputDir/test.out\" \"$outputDir\"" # need option -n ???
 	    eval "$comm"
 	    if [ $? -ne 0 ]; then
 		echo "Warning: an error occured when running '$comm', skipping" 1>&2

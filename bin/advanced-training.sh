@@ -20,6 +20,7 @@ nbFold=5
 
 cleanupFiles=""
 quietMode=""
+iobInput=""
 
 function usage {
   echo
@@ -48,6 +49,9 @@ function usage {
   echo "       space separated (use quotes for the argument); useful for delayed"
   echo "       processing in the case of distributed processing."
   echo "    -q quiet mode."
+  echo "    -i the input file is provided in IOB format instead of conll format."
+  echo "       Remark: if -t is supplied, test file is supposed to be in IOB format"
+  echo "       as well."
   echo 
 }
 
@@ -55,7 +59,7 @@ function usage {
 
 
 OPTIND=1
-while getopts 'ht:m:k:en:br:q' option ; do 
+while getopts 'ht:m:k:en:br:qi' option ; do 
     case $option in
 	"h" ) usage
  	      exit 0;;
@@ -67,6 +71,7 @@ while getopts 'ht:m:k:en:br:q' option ; do
 	"b" ) missingBScript="";;
 	"r" ) cleanupFiles="$OPTARG";;
 	"q" ) quietMode="yes";;
+	"i" ) iobInput="yes";;
  	"?" ) 
 	    echo "Error, unknow option." 1>&2
             printHelp=1;;
@@ -99,6 +104,9 @@ fi
 opts="-q -t \"$prefix.elephant-model\""
 if [ ! -z  "$maxNoProgress" ]; then
     opts="$opts -s \"$maxNoProgress\" -c $nbFold"
+fi
+if [ ! -z "$iobInput" ]; then
+    opts="$opts -i"
 fi
 [ -d "$workDir" ] || mkdir "$workDir"
 if [ ! -z "$elman" ]; then
@@ -134,15 +142,21 @@ if [ ! -z "$testFile" ]; then
     if [ -z "$quietMode" ]; then
 	echo -n "testing; " 1>&2
     fi
-    # get IOB gold output
-    untokenize.pl -i -f UD -C 1 -B T "$testFile" >"$workDir/gold.iob"
-    cleanupFiles="$cleanupFiles $workDir/gold.iob"
     opts=""
+    # get IOB gold output
+    if [ -z "$iobInput" ]; then
+	untokenize.pl -i -f UD -C 1 -B T "$testFile" >"$workDir/gold.iob"
+	opts="$opts -c"
+    else
+	cat "$testFile" >"$workDir/gold.iob"
+	opts="$opts -t"
+    fi
+    cleanupFiles="$cleanupFiles $workDir/gold.iob"
     if [ -z "$missingBScript" ]; then
 	opts="-b"
     fi
     # remark: evaluation is also done by tokenize.sh
-    command="tokenize.sh $opts -q -c -I -i \"$testFile\" -o \"$prefix\"  \"$prefix.elephant-model\""
+    command="tokenize.sh $opts -q -I -i \"$testFile\" -o \"$prefix\"  \"$prefix.elephant-model\""
     eval "$command"
     cleanupFiles="$cleanupFiles $prefix"
     
@@ -151,7 +165,11 @@ if [ ! -z "$testFile" ]; then
     fi
     # the following 3 steps are for baseline tokenizer only:
     # 1. get text file from test UD conllu file
-    untokenize.pl -f UD -C 1 -B T "$testFile" >"$workDir/baseline.txt"
+    if [ -z "$iobInput" ]; then
+	untokenize.pl -f UD -C 1 -B T "$testFile" >"$workDir/baseline.txt"
+    else
+	iob-to-text.pl -B T -n "$testFile" "$workDir/baseline.txt"
+    fi
     # 2. tokenize it with baseline tokenizer
     generic-tokenizer.pl -B T -i "$workDir/baseline.txt" >"$workDir/baseline.iob"
     cleanupFiles="$cleanupFiles $workDir/baseline.iob $workDir/baseline.txt"

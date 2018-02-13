@@ -7,6 +7,7 @@ elmanModel=""
 quiet=""
 iobInput=""
 addElmanFeatures=""
+format="UD"
 
 function usage {
   echo
@@ -20,6 +21,7 @@ function usage {
   echo "    -i provide the IOB file directly instead of the UD conllu file. The IOB file"
   echo "       is normally generated with: 'untokenize.pl -B T -i -f UD -C 1 <input>'."
   echo "    -q quiet mode: do not print stderr output from Wapiti."
+  echo "    -f <format id> format for untokenize.pl. default: $format."
   echo
 }
 
@@ -59,7 +61,7 @@ options=""
 if [ -z "$iobInput" ]; then
     # extract unicode chars + IOB labels from UD file
     iobFile=$(mktemp --tmpdir "tmp.$progName.iob.XXXXXXXXX")
-    untokenize.pl -B T -i -f UD -C 1 "$input" >$iobFile
+    untokenize.pl -B T -i -f "$format" -C 1 "$input" >$iobFile
     #echo $iobFile
 else
     iobFile="$input"

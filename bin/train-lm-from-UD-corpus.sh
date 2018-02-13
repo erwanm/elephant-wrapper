@@ -7,6 +7,8 @@ progName=$(basename "$BASH_SOURCE")
 percentTrain=80
 optThreads=""
 quiet=""
+iobInput=""
+
 
 function usage {
   echo
@@ -19,6 +21,9 @@ function usage {
   echo "       Default: $percentTrain."
   echo "    -t <nb threads>"
   echo "    -q quiet mode: don't print progress to STDOUT"
+  echo "    -i the input file is provided in IOB format instead of conll format."
+  echo "       Remark: if -t is supplied, test file is supposed to be in IOB format"
+  echo "       as well."
   echo
 }
 
@@ -26,13 +31,14 @@ function usage {
 
 
 OPTIND=1
-while getopts 'hp:t:q' option ; do 
+while getopts 'hp:t:qi' option ; do 
     case $option in
 	"h" ) usage
  	      exit 0;;
 	"p") percentTrain="$OPTARG";;
 	"t") optThreads="-threads $OPTARG";;
 	"q") quiet="yes";;
+	"i" ) iobInput="yes";;
  	"?" ) 
 	    echo "Error, unknow option." 1>&2
             printHelp=1;;
@@ -53,10 +59,13 @@ model="$2"
 
 cleanupFiles=""
 
-# extract unicode chars + IOB labels from UD file
-iobFile=$(mktemp --tmpdir "tmp.$progName.XXXXXXXXX")
-cleanupFiles="$cleanupFiles $iobFile"
-untokenize.pl -i -f UD -C 1 $input  >$iobFile
+iobFile="$input"
+if [ -z "$iobInput" ]; then
+    # extract unicode chars + IOB labels from UD file
+    iobFile=$(mktemp --tmpdir "tmp.$progName.XXXXXXXXX")
+    cleanupFiles="$cleanupFiles $iobFile"
+    untokenize.pl -i -f UD -C 1 $input  >$iobFile
+fi
 
 # split training/validation set
 total=$(cat $iobFile | wc -l)
