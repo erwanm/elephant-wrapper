@@ -36,7 +36,8 @@ function usage {
   echo "    -t <test .conll file> also perform testing of the model using this data,"
   echo "       including evaluation and applying a generic tokenizer as  baseline."
   echo "    -m <max no progress> specify the max number of patterns with no progress for"
-  echo "       stopping the process; 0 means process all files; default: $maxNoProgress."
+  echo "       stopping the process; 0 means process all files; default: see "
+  echo "       cv-tokenizers-from-UD-corpus.sh -h."
   echo "    -k <K> value for k-fold cross-validation; default: $nbFold."
   echo "    -e use Elman language models (usually performs better but longer training)"
   echo "    -n <parameters model name> name to use for the parameters model directory;"
@@ -102,11 +103,13 @@ fi
 
 
 opts="-q -t \"$prefix.elephant-model\"  -c $nbFold"
+optsLM=""
 if [ ! -z  "$maxNoProgress" ]; then
     opts="$opts -s \"$maxNoProgress\""
 fi
 if [ ! -z "$iobInput" ]; then
     opts="$opts -i"
+    optsLM="$optsLM -i"
 fi
 [ -d "$workDir" ] || mkdir "$workDir"
 if [ ! -z "$elman" ]; then
@@ -114,7 +117,8 @@ if [ ! -z "$elman" ]; then
 	if [ -z "$quietMode" ]; then
 	    echo -n "training LM; " 1>&2
 	fi
-	train-lm-from-UD-corpus.sh -q "$trainFile" "$workDir/elman.model"
+	comm="train-lm-from-UD-corpus.sh $optsLM -q \"$trainFile\" \"$workDir/elman.model\""
+	eval "$comm"
     fi
     opts="$opts -e \"$workDir/elman.model\""
 fi
