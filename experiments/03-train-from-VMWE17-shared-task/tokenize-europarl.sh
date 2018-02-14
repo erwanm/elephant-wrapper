@@ -24,8 +24,8 @@ function usage {
   echo "  - Requires that the models have been trained from VMWE17 data using script:"
   echo "    $scriptDir/train-tokenizers-from-vmwe17.sh"
   echo "  - Requires the (uncompressed) Europarl data available in <Europarl data dir>;"
-  echo "    The Europarl data can be downloaded from:"
-  echo "    http://www.statmt.org/europarl/v7/europarl.tgz"
+  echo "    The relevant Europarl data can be downloaded with: "
+  echo "    cd <Europarl data dir>; for l in $languages; do echo \$l; f=\$l-en.tgz; wget http://www.statmt.org/europarl/v7/\$f; tar xfz \$f; rm -f \$f;  done; cd .."
   echo
   echo "  Options:"
   echo "    -h this help"
