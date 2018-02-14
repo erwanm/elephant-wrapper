@@ -66,16 +66,17 @@ epDir="$2"
 outputDir="$3"
 
 [ -d "$outputDir" ] || mkdir "$outputDir"
-
+rm -f "$outputDir"/tasks
 
 for lang in $languages; do
+    LANG=$(echo "$lang" | tr [:lower:] [:upper:])
     mkdir "$outputDir/$lang"
     mkdir "$outputDir/$lang/ep-chunks"
     mkdir "$outputDir/$lang/tokenized"
-    echo "Splitting EP $lang..." 1>&2
+    echo "Splitting EP $LANG..." 1>&2
     split -d -l $nbSentTask "$epDir/europarl-v7.${lang}-en.${lang}" "$outputDir/$lang/ep-chunks/batch."
     for f in "$outputDir/$lang/ep-chunks"/batch.*; do
 	output="$outputDir/$lang/tokenized/$(basename "$f")"
-	echo "tokenize-line-by-line.sh -l \"$vmweModelsDir\" \"$f\" \"$output\" >\"$output.err\""
+	echo "tokenize-line-by-line.sh -l \"$vmweModelsDir/$LANG/elephant.elephant-model\" \"$f\" \"$output\" >\"$output.out\" 2>\"$output.err\""
     done
-done
+done >"$outputDir"/tasks
