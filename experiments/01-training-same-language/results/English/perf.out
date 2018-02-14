@@ -1,5 +1,5 @@
 TrainingSet	UD_English	UD_English-LinES	UD_English-ParTUT	UD_English-PUD
-UD_English	0.998	0.997	0.999	1.000
-UD_English-LinES	0.992	1.000	0.998	0.996
-UD_English-ParTUT	0.985	0.996	1.000	0.999
-UD_English-PUD	0.987	0.997	0.999	1.000
+UD_English	98.78	99.35	99.24	99.77
+UD_English-LinES	95.40	99.96	98.18	96.93
+UD_English-ParTUT	95.45	98.45	99.71	98.98
+UD_English-PUD	96.37	98.97	99.32	99.89

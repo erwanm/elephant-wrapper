@@ -1,5 +1,5 @@
 TrainingSet	UD_Chinese	UD_Chinese-CFL	UD_Chinese-HK	UD_Chinese-PUD
-UD_Chinese	0.957	0.840	0.869	0.924
-UD_Chinese-CFL	0.777	0.969	0.848	0.767
-UD_Chinese-HK	0.727	0.794	0.954	0.711
-UD_Chinese-PUD	0.889	0.839	0.864	0.982
+UD_Chinese	92.08	71.32	75.09	90.46
+UD_Chinese-CFL	60.96	94.45	72.31	65.71
+UD_Chinese-HK	57.57	70.05	93.21	60.76
+UD_Chinese-PUD	77.42	70.40	73.12	96.33
