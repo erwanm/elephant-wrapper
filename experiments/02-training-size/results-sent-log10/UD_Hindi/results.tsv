@@ -1,5 +1,0 @@
-dataset	no	nbSentences	elman	perf
-UD_Hindi	10000	10000	0	0.99995863
-UD_Hindi	1000	1000	0	0.99862307
-UD_Hindi	100	100	0	0.99830395
-UD_Hindi	10	10	0	0.99696839

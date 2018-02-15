@@ -1,5 +1,0 @@
-dataset	no	nbSentences	elman	perf
-UD_Dutch	10000	10000	1	0.99872253
-UD_Dutch	1000	1000	1	0.99933085
-UD_Dutch	100	100	1	0.99784047
-UD_Dutch	10	10	1	0.99428180

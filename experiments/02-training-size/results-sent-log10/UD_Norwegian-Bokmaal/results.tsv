@@ -1,5 +1,5 @@
 dataset	no	nbSentences	elman	perf
-UD_Norwegian-Bokmaal	10000	10000	0	0.99981366
-UD_Norwegian-Bokmaal	1000	1000	0	0.99969564
-UD_Norwegian-Bokmaal	100	100	0	0.99782602
-UD_Norwegian-Bokmaal	10	10	0	0.99549675
+UD_Norwegian-Bokmaal	10000	10000	0	0.99883201
+UD_Norwegian-Bokmaal	1000	1000	0	0.99789762
+UD_Norwegian-Bokmaal	100	100	0	0.98184609
+UD_Norwegian-Bokmaal	10	10	0	0.98001068

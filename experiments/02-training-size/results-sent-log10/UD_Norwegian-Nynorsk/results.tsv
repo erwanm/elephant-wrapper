@@ -1,5 +1,5 @@
 dataset	no	nbSentences	elman	perf
-UD_Norwegian-Nynorsk	10000	10000	0	0.99988184
-UD_Norwegian-Nynorsk	1000	1000	0	0.99984491
-UD_Norwegian-Nynorsk	100	100	0	0.99836049
-UD_Norwegian-Nynorsk	10	10	0	0.99590860
+UD_Norwegian-Nynorsk	10000	10000	0	0.99923304
+UD_Norwegian-Nynorsk	1000	1000	0	0.99874864
+UD_Norwegian-Nynorsk	100	100	0	0.98893957
+UD_Norwegian-Nynorsk	10	10	0	0.97618375
