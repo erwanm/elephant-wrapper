@@ -14,6 +14,7 @@ fi
 
 delayed=""
 customValues=""
+datasetsList=""
 
 function usage {
   echo
@@ -31,18 +32,22 @@ function usage {
   echo "       so that commands can be run in parallel."
   echo "    -c custom values for nb sentences: in this case the arg <nb samples>"
   echo "       contains the space-separated list of values."
+  echo "    -l <datasets list file> use this list of datasets (one by line)"
+  echo "       instead of all the datasets in <UD2.1 dataset dir> (allows to"
+  echo "       exclude cases)"
   echo
 }
 
 
 
 OPTIND=1
-while getopts 'dhc' option ; do 
+while getopts 'dhcl:' option ; do 
     case $option in
 	"h" ) usage
  	      exit 0;;
 	"d" ) delayed="yep";;
 	"c" ) customValues="yep";;
+	"l" ) datasetsList="$OPTARG";;
  	"?" ) 
 	    echo "Error, unknow option." 1>&2
             printHelp=1;;
@@ -71,15 +76,27 @@ fi
 
 [ -d "$workDir" ] || mkdir "$workDir"
 
+cleanupFiles=""
+
+if [ -z "$datasetsList" ]; then
+    datasetsList=$(mktemp --tmpdir "tmp.$progName.datasets.XXXXXXXXXX")
+    cleanupFiles="$cleanupFiles $datasetsList"
+    for f in "$inputDir"/UD_*; do
+	echo $(basename "$f")
+    done >"$datasetsList"
+fi
 
 # get datasets size in sentences
-for f in "$inputDir"/*/*-train.conllu; do
-    size=$(cat "$f" | grep "^1\s" | wc -l)
-    echo -e "$f\t$size"
+cat "$datasetsList" | while read  dataset ; do
+    f=$(ls "$inputDir/$dataset"/*-train.conllu 2>/dev/null)
+    if [ ! -z "$f" ]; then
+	size=$(cat "$f" | grep "^1\s" | wc -l)
+	echo -e "$dataset\t$size"
+    fi
 done | sort -k 2,2rn >"$workDir/size-datasets.txt"
 
 # extract N largest
-head -n "$nbDatasets" "$workDir/size-datasets.txt" | sed -e "s:$inputDir/::g" -e "s:/[^/]*train.conllu::g" >"$workDir/selected-datasets.txt"
+head -n "$nbDatasets" "$workDir/size-datasets.txt"  >"$workDir/selected-datasets.txt"
 
 # min size among selected
 size=$(tail -n 1 "$workDir/selected-datasets.txt" | cut -f 2)
@@ -102,3 +119,6 @@ cat "$workDir/selected-datasets.txt" | cut -f 1 | while read dataset; do
     fi
 done
 
+if [ ! -z "$cleanupFiles" ]; then
+    rm -f $cleanupFiles
+fi

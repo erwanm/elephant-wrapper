@@ -15,7 +15,7 @@ fi
 paramsModelName="elephant"
 iso639File="iso639-codes.txt"
 
-evalCol=4  # value to select: accuracy
+evalCol=8  # value to select for eval: token-based recall
 printPerfPattern="%.5"
 customNbsent=""
 
