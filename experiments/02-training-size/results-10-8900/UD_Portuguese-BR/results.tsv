@@ -1,0 +1,11 @@
+dataset	no	nbSentences	elman	perf
+UD_Portuguese-BR	0	890	0	0.99598010
+UD_Portuguese-BR	1	1780	0	0.99574164
+UD_Portuguese-BR	2	2670	0	0.99584384
+UD_Portuguese-BR	3	3560	0	0.99553724
+UD_Portuguese-BR	4	4450	0	0.99649111
+UD_Portuguese-BR	5	5340	0	0.99843292
+UD_Portuguese-BR	6	6230	0	0.99676364
+UD_Portuguese-BR	7	7120	0	0.99686584
+UD_Portuguese-BR	8	8010	0	0.99890986
+UD_Portuguese-BR	9	8900	0	0.99880766

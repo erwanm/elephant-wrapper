@@ -1,0 +1,11 @@
+dataset	no	nbSentences	elman	perf
+UD_Italian	0	890	1	0.98574380
+UD_Italian	1	1780	1	0.98822314
+UD_Italian	2	2670	1	0.98719008
+UD_Italian	3	3560	1	0.99380165
+UD_Italian	4	4450	1	0.99803719
+UD_Italian	5	5340	1	0.99690083
+UD_Italian	6	6230	1	0.99607438
+UD_Italian	7	7120	1	0.99772727
+UD_Italian	8	8010	1	0.99752066
+UD_Italian	9	8900	1	0.99690083

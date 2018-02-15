@@ -1,0 +1,11 @@
+dataset	no	nbSentences	elman	perf
+UD_Norwegian-Nynorsk	0	890	0	0.99842571
+UD_Norwegian-Nynorsk	1	1780	0	0.99850644
+UD_Norwegian-Nynorsk	2	2670	0	0.99814314
+UD_Norwegian-Nynorsk	3	3560	0	0.99834497
+UD_Norwegian-Nynorsk	4	4450	0	0.99931377
+UD_Norwegian-Nynorsk	5	5340	0	0.99915230
+UD_Norwegian-Nynorsk	6	6230	0	0.99903120
+UD_Norwegian-Nynorsk	7	7120	0	0.99919267
+UD_Norwegian-Nynorsk	8	8010	0	0.99907157
+UD_Norwegian-Nynorsk	9	8900	0	0.99911194

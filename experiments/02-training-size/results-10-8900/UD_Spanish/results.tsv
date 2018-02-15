@@ -1,0 +1,11 @@
+dataset	no	nbSentences	elman	perf
+UD_Spanish	0	890	0	0.99948862
+UD_Spanish	1	1780	0	0.99931816
+UD_Spanish	2	2670	0	0.99948862
+UD_Spanish	3	3560	0	0.99948862
+UD_Spanish	4	4450	0	0.99931816
+UD_Spanish	5	5340	0	0.99931816
+UD_Spanish	6	6230	0	0.99931816
+UD_Spanish	7	7120	0	0.99931816
+UD_Spanish	8	8010	0	0.99855110
+UD_Spanish	9	8900	0	0.99931816

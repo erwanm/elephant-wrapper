@@ -1,0 +1,11 @@
+dataset	no	nbSentences	elman	perf
+UD_Bulgarian	0	890	1	0.96330450
+UD_Bulgarian	1	1780	1	0.96336810
+UD_Bulgarian	2	2670	1	0.97220809
+UD_Bulgarian	3	3560	1	0.99675655
+UD_Bulgarian	4	4450	1	0.99796489
+UD_Bulgarian	5	5340	1	0.99790130
+UD_Bulgarian	6	6230	1	0.99802849
+UD_Bulgarian	7	7120	1	0.99860086
+UD_Bulgarian	8	8010	1	0.99790130
+UD_Bulgarian	9	8900	1	0.99815569

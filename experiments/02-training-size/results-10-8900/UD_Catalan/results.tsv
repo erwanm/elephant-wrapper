@@ -1,0 +1,11 @@
+dataset	no	nbSentences	elman	perf
+UD_Catalan	0	890	0	0.99806181
+UD_Catalan	1	1780	0	0.99830409
+UD_Catalan	2	2670	0	0.99816565
+UD_Catalan	3	3560	0	0.99844253
+UD_Catalan	4	4450	0	0.99875402
+UD_Catalan	5	5340	0	0.99944623
+UD_Catalan	6	6230	0	0.99944623
+UD_Catalan	7	7120	0	0.99904821
+UD_Catalan	8	8010	0	0.99941162
+UD_Catalan	9	8900	0	0.99918665

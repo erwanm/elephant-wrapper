@@ -1,0 +1,11 @@
+dataset	no	nbSentences	elman	perf
+UD_Spanish-AnCora	0	890	1	0.99883661
+UD_Spanish-AnCora	1	1780	1	0.99879847
+UD_Spanish-AnCora	2	2670	1	0.99912269
+UD_Spanish-AnCora	3	3560	1	0.99815002
+UD_Spanish-AnCora	4	4450	1	0.99895104
+UD_Spanish-AnCora	5	5340	1	0.99795930
+UD_Spanish-AnCora	6	6230	1	0.99855053
+UD_Spanish-AnCora	7	7120	1	0.99851239
+UD_Spanish-AnCora	8	8010	1	0.99879847
+UD_Spanish-AnCora	9	8900	1	0.99822631

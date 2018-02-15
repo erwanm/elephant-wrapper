@@ -1,0 +1,11 @@
+dataset	no	nbSentences	elman	perf
+UD_Russian-SynTagRus	0	890	0	0.97344003
+UD_Russian-SynTagRus	1	1780	0	0.98893334
+UD_Russian-SynTagRus	2	2670	0	0.98917170
+UD_Russian-SynTagRus	3	3560	0	0.98939304
+UD_Russian-SynTagRus	4	4450	0	0.98963991
+UD_Russian-SynTagRus	5	5340	0	0.99268749
+UD_Russian-SynTagRus	6	6230	0	0.99086575
+UD_Russian-SynTagRus	7	7120	0	0.99379416
+UD_Russian-SynTagRus	8	8010	0	0.98334894
+UD_Russian-SynTagRus	9	8900	0	0.99384524
