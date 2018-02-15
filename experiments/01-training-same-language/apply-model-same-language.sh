@@ -16,7 +16,7 @@ paramsModelName="elephant"
 iso639File="iso639-codes.txt"
 
 evalCol=4  # value to select: accuracy
-printPerfPattern="%.3f"
+printPerfPattern="%.2f"
 
 function usage {
   echo
@@ -110,6 +110,7 @@ cat "$datasetsFile" | while read datasetTrain; do
 	tokenize.sh -q -i "$testFile" -c -I -o "$output" "$trainDir"
 	rm -f "$workDir/$datasetTrain-$datasetTest.out" # no need for the actual tokenized text normally
 	perf=$(cat "$output.eval" | cut -f $evalCol)
+	perf=$(echo "scale=2; $perf * 100" | bc)
 	printf "\t$printPerfPattern" $perf
     done
     echo
