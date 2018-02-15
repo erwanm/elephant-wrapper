@@ -19,7 +19,7 @@ function usage {
   echo "  The tasks to run for every language are written to <output dir>/tasks; after all "
   echo "  the tasks have been run, the full tokenized output for every dataset can be "
   echo "  obtained with:"
-  echo "  for lang in <output dir>/*; do echo "\$lang"; cat \"\$lang\"/tokenized/batch.* >\"\$lang.tok\""
+  echo "  for lang in <output dir>/*; do echo "\$lang"; cat \"\$lang\"/tokenized/batch.* >\"\$lang.tok\"; done"
   echo
   echo "  - Requires that the models have been trained from VMWE17 data using script:"
   echo "    $scriptDir/train-tokenizers-from-vmwe17.sh"
