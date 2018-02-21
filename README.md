@@ -1,5 +1,5 @@
 
-**Elephant Wrapper version 0.2.2**
+**Elephant Wrapper version 0.2.3**
 
 
 # Overview
@@ -115,14 +115,70 @@ for f in batch.??; do (bash $f &); done
 
 Remark: since the datasets have different sizes, some batches will probably take more time than others.
 
+## Reproducing the experiments described in the LREC 18 paper
+
+The directory `experiments` contains 4 directories, each containing the scripts which were used to perform one of the experiments described in the LREC 18 paper. Of course, these scripts can also be used as examples in order to make your own experiments.
+
+### Intra-language experiment
+
+Run this experiment with:
+~~~
+experiments/01-training-same-language/apply-to-all-datasets-groups.sh <output dir>
+~~~
+
+This will generate the results of the experiment for the predefined groups (files `experiments/01-training-same-language/*.datasets`). After the experiment, the final tables can be found in `<output dir>/<language>/perf.out`.
+
+### Training size experiment
+
+~~~
+experiments/02-training-size/training-size-larger-datasets.sh -l experiments/02-training-size/regular-datasets.list <UD2.1 path> 20 10 <output dir>
+~~~
+
+This will perform the training stage followed by testing on the test set for 10 different sizes of training data (proportional increment), and for the 20 largest datasets found in `regular-datasets.list`.
+
+Option `-c` can be used to specify a custom list of sizes (warning: you must make sure that the datasets are large enough).
+
+If using option `-d` the commands will be printed. This is convenient to run the processes in parallel (see example for `advanced-training.sh` above).
+
+
+### VMWE17 experiment
+
+This shows how to tokenize a third-party resource (here Europarl) following a model trained on some input data. The input data must be provided in a format which gives both the tokens and the original text (e.g. `.conll`). Only the parts of the experiment about training tokenizers from the VMWE17 data and applying these tokenizers to Europarl data are covered here.
+
+~~~
+experiments/03-train-from-VMWE17-shared-task/train-tokenizers-from-vmwe17.sh <VMWE17 path> <output dir>
+split -d -l 1 <output dir>/tasks batch.
+for f in batch.??; do (bash $f &); done # Caution: very long!
+~~~
+
+- Requires the [VMWE17 data](https://gitlab.com/parseme/sharedtask-data) available in <VMWE17 path>.
+- `train-tokenizers-from-vmwe17.sh` prints the commands to execute for every dataset.
+- Remark: if you want to skip the training stage, the models can be found in `experiments/03-train-from-VMWE17-shared-task/vmwe-trained-models.tar.bz2`.
+
+Finally the models can be applied to Europarl with:
+
+~~~
+experiments/03-train-from-VMWE17-shared-task/tokenize-europarl.sh <VMWE-trained models dir> <Europarl data dir> <output dir>
+~~~
+
+This script will print the commands to run as individual files in `<output dir>/tasks`.
+
+- Option `-n` can be used to split Europarl into chunks which can then be processed in parallel.
+- Warning: the script `tokenize-line-by-line.sh` used here is very unefficient (sorry!).
+
+
 
 # Changelog
 
-## Next release
+## 0.2.3
 
 - [fixed] couple bugs, in particular https://github.com/erwanm/elephant-wrapper/issues/39
-- [added] experiment training size with results (paper LREC 18)
-- [added] experiment same language with results (paper LREC 18)
+- [added] `experiments/00-general-perf`: script and results to reproduce the training of all the tokenizers from UD2.1 data (paper LREC 18).
+- [added] `experiments/01-training-same-language`: scripts and results to reproduce the intra-language experiments (paper LREC 18).
+- [added] `experiments/02-training-size`: scripts and results to reproduce the training size experiments (paper LREC 18).
+- [added] `experiments/03-train-from-VMWE17-shared-task`: scripts, models and results to reproduce the part about Europarl tokenization of the VMWE17 Shared Task experiment (paper LREC 18).
+- [added] Token-based precision and recall available as evaluation measures.
+- [added] Script `tokenize-line-by-line.sh` (warning: very slow).
 
 ## 0.2.2
 
