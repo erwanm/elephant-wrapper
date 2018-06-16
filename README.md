@@ -14,6 +14,7 @@ This wrapper aims at improving the usability of the original [Elephant](http://g
 - `train-multiple-tokenizers.sh` streamlines the process of training tokenizers for multiple datasets provided in the same format, like the [Universal Dependencies 2.x](http://universaldependencies.org/) corpora.
 - The models trained from the Universal Dependencies 2.x datasets; this means that this software include tokenizers for 50 languages (see usage below).
 
+More details can be found in [this paper](http://www.lrec-conf.org/proceedings/lrec2018/summaries/1072.html); you can cite it btw ;)
 
 
 # Installation
